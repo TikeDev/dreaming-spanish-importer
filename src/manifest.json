@@ -3,11 +3,7 @@
   "name": "Dreaming Spanish Importer",
   "version": "1.0",
   "description": "Automatically add video hours to Dreaming Spanish from YouTube.",
-  "permissions": ["scripting"],
-  "host_permissions": [
-    "https://www.youtube.com/*",
-    "https://www.dreamingspanish.com/*"
-  ],
+
   "background": {
     "service_worker": "background.js"
   },
@@ -27,11 +23,7 @@
   "web_accessible_resources": [
     {
       "resources": ["add_icon.jpeg"],
-      "matches": [
-        "https://www.youtube.com/*",
-        "https://dreamingspanish.com/*",
-        "https://*.dreamingspanish.com/*"
-      ]
+      "matches": ["https://www.youtube.com/*"]
     }
   ],
   "action": {}
