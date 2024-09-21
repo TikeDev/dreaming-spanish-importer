@@ -72,6 +72,7 @@ window.onload = function () {
         let cleanTitle = rawTitle.replace(/\s+/g, " ");
 
         title = cleanTitle;
+        console.log(title);
       } else {
       }
 
@@ -81,7 +82,7 @@ window.onload = function () {
           action: "openDreamingSpanish",
           videoDuration: duration,
           tabUrl: tabUrl,
-          videoTitle: title,
+          title: title,
         },
         (response) => {}
       );
