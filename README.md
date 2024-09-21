@@ -17,7 +17,11 @@ To use this, do the following:
 
 ## Installation
 
-1. Download this repository to your computer.
+1. Download this repository to your computer. (Click 'Download Zip'). Note that you will need to unzip this.
+
+<img width="950" alt="image" src="https://github.com/user-attachments/assets/e0ad8fce-cdf7-4c0b-9eef-eeeef90b951b">
+
+
 2. Navigate to chrome://extensions/
 3. In the top right, activate developer mode
 
