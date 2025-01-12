@@ -23,6 +23,7 @@
     {
       "resources": ["add_icon.jpeg"],
       "matches": ["https://www.youtube.com/*"]
+      "resources": ["add_icon.jpeg","dreamingplus.png"],
     }
   ],
   "action": {},
