@@ -24,7 +24,7 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const duration = request.videoDuration;
     const tabUrl = request.tabUrl;
     const title = request.title;
-
+    const author = request.author !== undefined ? request.author : "Unknown Author";
     // Create a MutationObserver to watch for the "Add hours outside the platform" button
     const observer = new MutationObserver((mutations, observerInstance) => {
       const addHoursButton = [...document.querySelectorAll("button")].find(
@@ -59,7 +59,8 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
             'textarea[name="description"]'
           );
           if (descriptionInput) {
-            simulateUserInput(descriptionInput, `${title} - ${tabUrl}`);
+            // Title first to make it show in preview table
+            simulateUserInput(descriptionInput, `${title} \n${author} \n${tabUrl}`);
           } else {
             console.error(
               "Dreaming Spanish Helper: 'description' input field not found."

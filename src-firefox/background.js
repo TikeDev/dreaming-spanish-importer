@@ -5,6 +5,7 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const duration = request.videoDuration;
     const tabUrl = request.tabUrl;
     const title = request.title;
+    const author = request.author;
 
     // Open the dreamingspanish.com/progress page
     browser.tabs.create(
@@ -21,6 +22,7 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
               videoDuration: duration,
               tabUrl: tabUrl,
               title: title,
+              author: author,
             });
             chrome.tabs.onUpdated.removeListener(listener);
           }

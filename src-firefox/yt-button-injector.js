@@ -75,6 +75,7 @@ function createButton() {
         return;
       }
       duration = Math.floor(video.duration / 60); // Convert to minutes
+    }
     else if (mode === "spotify") {
       // Get the duration from Spotify player
       const timer = document.querySelector('[data-testid="playback-duration"]');
@@ -119,6 +120,22 @@ function createButton() {
       }
     }
 
+    // Get the content creator's name
+    let author = "Unknown Author";
+    if (mode === "youtube") {
+      const authorElement = document.querySelector("[class*=ytd-channel-name]");
+      console.log(authorElement);
+      if (authorElement) {
+        author = authorElement.innerText;
+      }
+    }
+    else if (mode === "spotify") {
+      const authorElement = document.querySelector('[data-testid="context-item-info-show"]');
+      if (authorElement) {
+        author = authorElement.textContent;
+      }
+    }
+
 
     // Send message to the background script with the video duration, title, and tab URL
     chrome.runtime.sendMessage(
@@ -127,6 +144,7 @@ function createButton() {
         videoDuration: duration,
         tabUrl: tabUrl,
         title: title,
+        author: author,
       },
       (response) => {}
     );
@@ -141,7 +159,6 @@ function observeDOM() {
   const callback = function (mutationsList, observer) {
     for (let mutation of mutationsList) {
       if (mutation.type === "childList") {
-        const controls = document.querySelector(".ytp-right-controls");
         const controls = document.querySelector(".ytp-right-controls, [data-testid*=control-button-npv]");
         if (controls && !document.getElementById("dreaming-spanish-button")) {
           createButton();
