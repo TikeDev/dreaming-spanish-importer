@@ -8,7 +8,10 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     // Open the dreamingspanish.com/progress page
     browser.tabs.create(
-      { url: "https://dreamingspanish.com/progress" },
+      { 
+        url: "https://dreamingspanish.com/progress",
+        active: false // Don't focus tab when it's created
+       },
       (tab) => {
         // When the new tab is fully loaded, send the video duration to the content script
         chrome.tabs.onUpdated.addListener(function listener(tabId, info) {
