@@ -20,17 +20,17 @@ function createButton() {
   img.alt = "Add to Dreaming Spanish"; // Alt text for accessibility
 
   // Style the img to be rounded and fit within the button
-
   img.style.borderRadius = "50%"; // Makes the image rounded
   img.style.display = "block";
   img.style.marginRight = "8px";
+  // Different styling depending on platform
   if (mode === "youtube") {
     img.style.marginTop = "-36px";
-    img.style.width = "24px"; // Adjust size as needed
+    img.style.width = "24px";
     img.style.height = "24px";
   }
   else if (mode === "spotify") {
-    img.style.width = "20px"; // Adjust size as needed
+    img.style.width = "20px";
     img.style.height = "20px";
   }
   // Append the img to the button
@@ -135,7 +135,6 @@ function createButton() {
         author = authorElement.textContent;
       }
     }
-
 
     // Send message to the background script with the video duration, title, and tab URL
     chrome.runtime.sendMessage(
