@@ -154,8 +154,18 @@ function createButton() {
 function observeDOM() {
   const targetNode = document.body;
   const config = { childList: true, subtree: true };
+  let lastExecutionTime = 0;
+  const timeout = 3000;
 
   const callback = function (mutationsList, observer) {
+
+    // Delay to avoid overdoing page traversal
+    const currentTime = Date.now();
+    if ((currentTime - lastExecutionTime) < timeout) {
+      return;
+    }
+    lastExecutionTime = currentTime;
+
     for (let mutation of mutationsList) {
       if (mutation.type === "childList") {
         const controls = document.querySelector(".ytp-right-controls, [data-testid*=control-button-npv]");
