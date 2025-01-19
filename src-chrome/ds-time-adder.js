@@ -1,5 +1,3 @@
-// content.js
-
 // Function to simulate user input more thoroughly
 function simulateUserInput(element, value) {
   element.focus();
@@ -26,13 +24,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const duration = request.videoDuration;
     const tabUrl = request.tabUrl;
     const title = request.title;
+    const author = request.author !== undefined ? request.author : "Unknown Author";
 
     // Create a MutationObserver to watch for the "Add hours outside the platform" button
     const observer = new MutationObserver((mutations, observerInstance) => {
-      console.log(
-        "Dreaming Spanish Helper: Checking for 'Add hours outside the platform' button..."
-      );
-
       const addHoursButton = [...document.querySelectorAll("button")].find(
         (btn) =>
           btn.textContent.trim().includes("Add hours outside the platform")
@@ -44,9 +39,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
         // Simulate a click on the "Add hours outside the platform" button
         addHoursButton.click();
-        console.log(
-          "Dreaming Spanish Helper: Clicked 'Add hours outside the platform' button."
-        );
 
         // Now observe the DOM for the modal to appear
         const modalObserver = new MutationObserver(
@@ -56,15 +48,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             // Adjust the selector based on the actual modal structure
             const modal = document.querySelector(".modal"); // Replace with the actual modal selector if different
             if (modal) {
-              console.log("Dreaming Spanish Helper: Modal found!");
 
               // Stop observing once the modal is found
               modalObserverInstance.disconnect();
 
               // Input the video duration into the 'timeMinutes' field
-              const timeMinutesInput = modal.querySelector(
-                'input[name="timeMinutes"]'
-              );
+              const timeMinutesInput = modal.querySelector('input[name="timeMinutes"]');
+              
               if (timeMinutesInput) {
                 simulateUserInput(timeMinutesInput, duration);
               } else {
@@ -74,15 +64,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 return; // Exit if the input field isn't found
               }
 
-              const descriptionInput = modal.querySelector(
-                'textarea[name="description"]'
-              );
+              const descriptionInput = modal.querySelector('textarea[name="description"]');
+              
               if (descriptionInput) {
-                simulateUserInput(descriptionInput, `${title} - ${tabUrl}`);
+                // Title first to make it show in preview table
+                simulateUserInput(descriptionInput, `${title} \n${author} \n${tabUrl}`);
               } else {
-                console.error(
-                  "Dreaming Spanish Helper: 'description' input field not found."
-                );
+                console.error("Dreaming Spanish Helper: 'description' input field not found.");
                 return; // Exit if the input field isn't found
               }
 
@@ -94,9 +82,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
               if (saveButton) {
                 saveButton.click();
               } else {
-                console.error(
-                  "Dreaming Spanish Helper: 'save' button not found."
-                );
+                console.error("Dreaming Spanish Helper: 'save' button not found.");
               }
               window.close();
             }
