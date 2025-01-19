@@ -4,6 +4,7 @@ console.log("[Dreaming Spanish Helper] Injecting button...");
 function createButton() {
   // Prevent injecting multiple buttons
   if (document.getElementById("dreaming-spanish-button")) return;
+
   // Set mode by url
   let mode = "youtube";
   if (window.location.href.includes("spotify")) {
@@ -90,7 +91,6 @@ function createButton() {
         duration = parseInt(times[0], 10) * 60 + parseInt(times[1], 10);
       }
     }
-    
 
     // Get the current tab's URL
     const tabUrl = window.location.href;

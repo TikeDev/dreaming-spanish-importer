@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Dreaming Spanish Importer",
+  "name": "Dreaming Plus",
   "version": "1.0",
   "description": "Automatically add video hours to Dreaming Spanish from YouTube and Spotify.",
   "content_scripts": [
@@ -34,7 +34,7 @@
   "action": {},
   "browser_specific_settings": {
     "gecko": {
-      "id": "dreamingspanishimporter@jaredfoster.dev",
+      "id": "dreamingplus@maciejw.dev",
       "strict_min_version": "58.0"
     }
   }
