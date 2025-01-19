@@ -27,7 +27,7 @@ window.onload = function () {
     img.style.marginRight = "8px";
     // Different styling depending on platform
     if (mode === "youtube") {
-      img.style.marginTop = "-36px";
+      // img.style.marginTop = "-36px";
       img.style.width = "24px";
       img.style.height = "24px";
     }
@@ -58,6 +58,7 @@ window.onload = function () {
     let controls = document.querySelector(".ytp-right-controls, [data-testid*=control-button-npv]");
     if (controls) {
       if (mode === "youtube") {
+        controls.style.display = "flex";
         controls.insertBefore(button, controls.firstChild); // Insert at the beginning
       }
       else {

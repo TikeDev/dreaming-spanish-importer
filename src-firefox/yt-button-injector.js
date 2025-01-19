@@ -26,7 +26,9 @@ function createButton() {
   img.style.marginRight = "8px";
   // Different styling depending on platform
   if (mode === "youtube") {
-    img.style.marginTop = "-36px";
+    // This is different depending on yt-right-controls being display:flex.
+    // Solved by modifying it to always be flex.
+    // img.style.marginTop = "-36px";
     img.style.width = "24px";
     img.style.height = "24px";
   }
@@ -57,6 +59,7 @@ function createButton() {
   let controls = document.querySelector(".ytp-right-controls, [data-testid*=control-button-npv]");
   if (controls) {
     if (mode === "youtube") {
+      controls.style.display = "flex";
       controls.insertBefore(button, controls.firstChild); // Insert at the beginning
     }
     else {
