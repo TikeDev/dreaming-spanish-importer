@@ -1,7 +1,6 @@
 ## What is this?
 
-This is the source code for a Chrome extension used to provide a helpful icon on the YouTube video control bar, that when pressed, imports the video into the
-'External Hours' part of the Dreaming Spanish website.
+This is the source code for a Firefox/Chrome extension that adds a specialized button to YouTube and Spotify to add the video or podcast time to your Dreaming Spanish tracker.
 
 <img width="147" alt="image" src="https://github.com/user-attachments/assets/80d4fd00-bd4c-48af-8e3f-ace7a592c1d3">
 
@@ -9,11 +8,13 @@ This is the source code for a Chrome extension used to provide a helpful icon on
 
 ## How do I use this?
 
-To use this, do the following:
+To use this, you can:
 
-1. Ensure you are logged in to dreamingspanish.com. If you are not logged in, when the extension attempts to navigate to dreamingspanish.com/progress, it will fail. This does not mean that the tab needs to be open to use this extension.
-2. Go to a YouTube video and watch it.
-3. Click on the Pablo icon and watch as the extension quickly opens dreamingspanish.com/progress and imports an entry for the video into your log.
+1. Download it from your respective web store:
+  - https://chromewebstore.google.com/detail/dreaming-plus/papopjcpngdnepjjpklikehjdcoobchh
+  - https://addons.mozilla.org/en-US/firefox/addon/dreaming-plus/
+2. Or download this repository and add the sourcecode to Firefox or Chrome manually.
+
 
 ## Installation
 
