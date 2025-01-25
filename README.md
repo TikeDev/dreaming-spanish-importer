@@ -2,10 +2,6 @@
 
 This is the source code for a Firefox/Chrome extension that adds a specialized button to YouTube and Spotify to add the video or podcast time to your Dreaming Spanish tracker.
 
-<img width="147" alt="image" src="https://github.com/user-attachments/assets/80d4fd00-bd4c-48af-8e3f-ace7a592c1d3">
-
-<img width="973" alt="image" src="https://github.com/user-attachments/assets/c89a8bfa-5d2d-496f-a0d8-1e4fdfdb1cc8">
-
 ## How do I use this?
 
 To use this, you can:
