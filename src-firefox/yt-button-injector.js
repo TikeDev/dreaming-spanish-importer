@@ -95,7 +95,15 @@ function createButton() {
     }
 
     // Get the current tab's URL
-    const tabUrl = window.location.href;
+    let tabUrl = window.location.href;
+    if (mode === "youtube") {
+    }
+    else if (mode === "spotify") {
+      const urlElement = document.querySelector('[data-testid="context-item-link"]');
+      if (urlElement.href) {
+        tabUrl = urlElement.href;
+      }
+    }
 
     let title = "Untitled";
     // Retrieve the video title
