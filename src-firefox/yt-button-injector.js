@@ -28,7 +28,6 @@ function createButton() {
   if (mode === "youtube") {
     // This is different depending on yt-right-controls being display:flex.
     // Solved by modifying it to always be flex.
-    // img.style.marginTop = "-36px";
     img.style.width = "24px";
     img.style.height = "24px";
   }
