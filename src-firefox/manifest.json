@@ -28,7 +28,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["add_icon.jpeg","dreamingplus.png"],
+      "resources": ["dreamingplus.png","dreamingplus-clicked.png"],
       "matches": ["https://www.youtube.com/*","https://open.spotify.com/*","https://spotify.com/*"]
     }
   ],
