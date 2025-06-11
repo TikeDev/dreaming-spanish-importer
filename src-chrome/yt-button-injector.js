@@ -12,6 +12,10 @@ window.onload = function () {
     if (window.location.href.includes("spotify")) {
       mode = "spotify";
     }
+    else if (window.location.href.includes("pocketcasts")) {
+      console.log("FOUND POCKET CASTS");
+      mode = "pocketcasts";
+    }
 
     // Create the button element
     const button = document.createElement("button");
@@ -19,7 +23,7 @@ window.onload = function () {
 
     // Create the img element
     const img = document.createElement("img");
-    img.src = chrome.runtime.getURL("add_icon.jpeg"); // Reference the image
+    img.src = chrome.runtime.getURL("dreamingplus.png"); // Reference the image
     img.alt = "Add to Dreaming Spanish"; // Alt text for accessibility
 
     // Style the img to be rounded and fit within the button
@@ -35,6 +39,10 @@ window.onload = function () {
     else if (mode === "spotify") {
       img.style.width = "20px";
       img.style.height = "20px";
+    }
+    else if (mode === "pocketcasts") {
+      img.style.width = "30px";
+      img.style.height = "30px";
     }
     // Append the img to the button
     button.appendChild(img);
@@ -55,29 +63,30 @@ window.onload = function () {
       button.style.opacity = "1";
     };
 
-    // Append the button to the .ytp-right-controls div
-    let controls = document.querySelector(".ytp-right-controls, [data-testid*=control-button-npv]");
+    // Append the button to the controls strip
+    let controls = document.querySelector(".ytp-right-controls, [data-testid*=control-button-npv], button[aria-label*='Show Up Next']"); 
+
     if (controls) {
       if (mode === "youtube") {
         controls.style.display = "flex";
-      controls.insertBefore(button, controls.firstChild); // Insert at the beginning
+        controls.insertBefore(button, controls.firstChild); // Insert at the beginning
       }
       else {
         controls.parentElement.insertBefore(button, controls.parentElement.firstChild); // Insert at the beginning
       }
-    } else {
+     } else {
     }
 
     // Button click event handler
-    button.addEventListener("click", async () => {
+    button.addEventListener("click", async (event) => {
 
       let duration;
       if (mode === "youtube") {
-      // Get the video duration from YouTube player
-      const video = document.querySelector("video");
-      if (!video) {
-        return;
-      }
+        // Get the video duration from YouTube player
+        const video = document.querySelector("video");
+        if (!video) {
+          return;
+        }
         duration = Math.floor(video.duration / 60); // Convert to minutes
       }
       else if (mode === "spotify") {
@@ -94,25 +103,44 @@ window.onload = function () {
           duration = parseInt(times[0], 10) * 60 + parseInt(times[1], 10);
         }
       }
+      else if (mode === "pocketcasts") {
+        event.stopPropagation(); //prevent existing elements' listeners from interfering with click event
+        // Get the duration from PocketCasts player
+        const timer = document.querySelector('[data-testid="current-time"]');
+        console.log("POCKETCASTS TIMER= " + timer.textContent);
 
+         if (!timer) {
+          return;
+        }
+        const times = timer.textContent.split(":");
+        if (times.length === 2) {
+          duration = parseInt(times[0], 10);
+        }
+        else if (times.length === 3) {
+          duration = parseInt(times[0], 10) * 60 + parseInt(times[1], 10);
+        } 
+        console.log("POCKETCASTS DURATION= " + duration);
+
+      }
+ 
       // Get the current tab's URL
-      const tabUrl = window.location.href;
+      let tabUrl = window.location.href;
 
       let title = "Untitled";
       // Retrieve the video title
       if (mode === "youtube") {
-      const titleElement = document.querySelector("#above-the-fold #title");
+        const titleElement = document.querySelector("#above-the-fold #title");
         title = "Untitled Video"; // Default title if not found
-      if (titleElement) {
-        // Original title with \n and extra spaces
-        let rawTitle = titleElement.textContent.trim();
+        if (titleElement) {
+          // Original title with \n and extra spaces
+          let rawTitle = titleElement.textContent.trim();
 
-        // Clean the title by replacing multiple whitespace characters with a single space
-        let cleanTitle = rawTitle.replace(/\s+/g, " ");
+          // Clean the title by replacing multiple whitespace characters with a single space
+          let cleanTitle = rawTitle.replace(/\s+/g, " ");
 
-        title = cleanTitle;
-        console.log(title);
-      } else {
+          title = cleanTitle;
+          console.log(title);
+        } else {
         }
       }
       else if (mode === "spotify") {
@@ -121,8 +149,18 @@ window.onload = function () {
         if (titleElement) {
           title = titleElement.textContent;
         }
+        tabUrl = document.querySelector('a[data-testid="context-item-link"]').href; // grab episode link
       }
-
+      else if (mode === "pocketcasts") {
+        const titleElement = document.querySelector('.episode-title.player_episode');
+        title = "Untitled Track"; // Default title if not found
+        if (titleElement) {
+          title = titleElement.textContent;
+          console.log("POCKETCASTS TITLE= " + title);
+        }
+        tabUrl = document.querySelector("a[class*='episode-title player_episode']").href; // grab episode link
+      }
+ 
       // Get the content creator's name
       let author = "Unknown Author";
       if (mode === "youtube") {
@@ -138,9 +176,16 @@ window.onload = function () {
           author = authorElement.textContent;
         }
       }
-
+       else if (mode === "pocketcasts") { 
+        const authorElement = document.querySelector('.podcast-title.player_podcast_title');
+        if (authorElement) {
+          author = authorElement.textContent;
+          console.log("POCKETCASTS AUTHOR= " + author);
+        }
+      }
+ 
       // Send message to the background script with the video duration, title, and tab URL
-      chrome.runtime.sendMessage(
+       chrome.runtime.sendMessage(
         {
           action: "openDreamingSpanish",
           videoDuration: duration,
@@ -150,7 +195,7 @@ window.onload = function () {
         },
         (response) => {}
       );
-    });
+     });
   }
 
   // Function to observe DOM changes and inject the button when .ytp-right-controls is available
@@ -171,7 +216,7 @@ window.onload = function () {
 
       for (let mutation of mutationsList) {
         if (mutation.type === "childList") {
-          const controls = document.querySelector(".ytp-right-controls, [data-testid*=control-button-npv]");
+          const controls = document.querySelector(".ytp-right-controls, [data-testid*=control-button-npv], button[aria-label*='Show Up Next']");
           if (controls && !document.getElementById("dreaming-spanish-button")) {
             createButton();
           }

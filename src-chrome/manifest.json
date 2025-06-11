@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Dreaming Spanish Importer Plus",
+  "name": "Dreaming Spanish (Youtube/Spotify/Pocket Casts/CSV File) Importer",
   "version": "1.0.0",
-  "description": "Automatically add watch/listening history to Dreaming Spanish from a file, Youtube, or Spotify.",
+  "description": "Automatically add watch/listening history to Dreaming Spanish from a file, Youtube, Spotify, or Pocket Casts.",
   "background": {
     "service_worker": "background.js"
   },
@@ -14,7 +14,12 @@
         "https://spotify.com/*",
         "https://www.spotify.com/*",
         "https://www.youtube.com/*", 
-        "https://youtube.com/*"],
+        "https://youtube.com/*",
+        "https://play.pocketcasts.com/*",
+        "https://www.play.pocketcasts.com/*",
+        "https://www.pocketcasts.com/*",
+        "https://pocketcasts.com/*"],
+        
       "js": ["yt-button-injector.js"]
     },
     {
@@ -28,7 +33,14 @@
   "web_accessible_resources": [
     {
       "resources": ["add_icon.jpeg","dreamingplus.png"],
-      "matches": ["https://www.youtube.com/*","https://open.spotify.com/*","https://spotify.com/*"]
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://open.spotify.com/*",
+        "https://spotify.com/*",
+        "https://play.pocketcasts.com/*", 
+        "https://www.play.pocketcasts.com/*",
+        "https://www.pocketcasts.com/*",
+        "https://pocketcasts.com/*"]
     }
   ],
   "action": {}
