@@ -1,40 +1,35 @@
 ## What is this?
 
-This is the source code for a Firefox/Chrome extension that adds a specialized button to YouTube and Spotify to add the video or podcast time to your Dreaming Spanish tracker.
+This is the source code for a Chrome extension (Firefox extension to be updated soon!) that adds a specialized button to YouTube, Spotify, and Pocket Casts for adding the video or podcast time to your Dreaming Spanish tracker.
 
 ## How do I use this?
 
-To use this, you can:
-
-1. Download it from your respective web store:
-  - https://chromewebstore.google.com/detail/dreaming-plus/papopjcpngdnepjjpklikehjdcoobchh
-  - https://addons.mozilla.org/en-US/firefox/addon/dreaming-plus/
-2. Or download this repository and add the sourcecode to Firefox or Chrome manually.
+You can download this repository and add the sourcecode to Chrome manually.
 
 
 ## Installation
 
 1. Download this repository to your computer. (Click 'Download Zip'). Note that you will need to unzip this.
 
-<img width="950" alt="image" src="https://github.com/user-attachments/assets/e0ad8fce-cdf7-4c0b-9eef-eeeef90b951b">
-
+<img width="771" alt="readme_zip-file" src="https://github.com/user-attachments/assets/c19f64a2-9264-4a74-a5f5-93dbefed179c" />
 
 2. Navigate to chrome://extensions/
 3. In the top right, activate developer mode
 
-<img width="211" alt="image" src="https://github.com/user-attachments/assets/e66e7994-8af0-4b39-8f1c-180bb8f971bf">
 
-4. In the top left, click 'Load un-packed extension'
+<img width="203" alt="Screen Shot 2025-06-11 at 3 48 57 PM" src="https://github.com/user-attachments/assets/0a771f7f-f4de-4986-91fd-d642db6617b6" />
 
-<img width="598" alt="image" src="https://github.com/user-attachments/assets/a29d32af-5600-40d3-82cb-ecbb660cb40a">
+4. In the top left, click 'Load unpacked extensions'
 
-5. Select the 'src' directory that you downloaded from Step 1, and press submit.
+<img width="512" alt="Screen Shot 2025-06-11 at 3 53 51 PM" src="https://github.com/user-attachments/assets/cc6d80cb-34ee-4563-9b13-4194ff202d37" />
 
-FAQ
+5. Select the 'src-chrome' directory that you downloaded from Step 1, and press submit.
+
+## FAQ
 
 > This is really annoying, why can't I just install it as an extension using the extension store?
 
-Great question - this extension is currently under review, and once it is approved, you will be able to install it from the extension store.
+Great question - I have a lot more features that I'm working on (file import, display, export etc) so I haven't submitted the extension to the store yet. Stay tuned!
 
 > How do I know this is safe and you aren't mining bitcoin on my computer?
 
@@ -49,3 +44,5 @@ to open an issue on this repository and I will get to it as soon as I can.
 > You should add X feature
 
 I'd love to add more features to this. Please feel free to open an issue on this repository and I will be happy to get to it when I have the time.
+
+Thanks to [jarmeister99](https://github.com/jarmeister99) and [MaciejWdev](https://github.com/MaciejWdev) for making their code available!
