@@ -76,7 +76,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
               
               if (descriptionInput) {
                 // Title first to make it show in preview table
-                simulateUserInput(descriptionInput, `${title} \n${author} \n${tabUrl}`);
+                simulateUserInput(descriptionInput, `${title} || ${author} \n${tabUrl}`);
               } else {
                 console.error("Dreaming Spanish Helper: 'description' input field not found.");
                 return; // Exit if the input field isn't found

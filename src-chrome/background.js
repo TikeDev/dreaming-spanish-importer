@@ -10,8 +10,8 @@
 var bearerToken = 'enter bearer token here'
 
 // POST DS loaded data directly to website
-async function postHTTPDSData(jsonObjArray){
-  const apiUrl = 'https://www.dreamingspanish.com/.netlify/functions/externalTime';
+async function postHTTPDSData(jsonObjArray, endPoint){
+  const apiUrl = 'https://www.dreamingspanish.com/.netlify/functions/' + endPoint;
 
   jsonObjArray.forEach((item) => {
     fetch(apiUrl, {
@@ -30,9 +30,8 @@ async function postHTTPDSData(jsonObjArray){
 }
 
 // GET DS history directly from website
-async function getHTTPDSData(){
-  const apiUrl = 'https://www.dreamingspanish.com/.netlify/functions/externalTime';
-  var endpoint = "";
+async function getHTTPDSData(endPoint){
+  const apiUrl = 'https://www.dreamingspanish.com/.netlify/functions/' + endPoint;
 
   try {
     const response = await fetch(apiUrl, {
@@ -49,7 +48,7 @@ async function getHTTPDSData(){
 
     const data = await response.json();
     console.log('Success:', data);
-    return data.externalTimes;
+    return data;
   } 
   catch (error) {
     console.error('Error:', error);
@@ -94,6 +93,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const duration = request.videoDuration;
     const tabUrl = request.tabUrl;
     const title = request.title;
+    const author = request.author;
 
     // Open the dreamingspanish.com/progress/time-outside page
     chrome.tabs.create(
@@ -107,6 +107,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
               videoDuration: duration,
               tabUrl: tabUrl,
               title: title,
+              author: author
             });
             chrome.tabs.onUpdated.removeListener(listener);
           }
@@ -122,12 +123,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "DSHTTPRequest") {
     if (request.requestType == "POST"){
-      postHTTPDSData(request.jsonEntries).then(() => {
+      postHTTPDSData(request.jsonEntries, request.endPoint).then(() => {
         sendResponse(""); // send data back to content script
       });
     }
     else if (request.requestType == "GET"){
-      getHTTPDSData().then((data) => {
+      getHTTPDSData(request.endPoint).then((data) => {
         sendResponse(data); // send data back to content script
       })
     }  

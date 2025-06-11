@@ -126,7 +126,7 @@ window.onload = function () {
       // Get the content creator's name
       let author = "Unknown Author";
       if (mode === "youtube") {
-        const authorElement = document.querySelector("[class*=ytd-channel-name]");
+        const authorElement = document.querySelector("a[class*='yt-simple-endpoint style-scope yt-formatted-string']");
         console.log(authorElement);
         if (authorElement) {
           author = authorElement.innerText;

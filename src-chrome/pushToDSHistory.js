@@ -243,13 +243,13 @@ function isEmptyDSEntry(data){
 async function convertDSToDisplayData(dsData){
   var displayData = [];
   dsData.forEach(obj => {
-    // filter out header and empty entries
+    // filter out header/empty entries into new array
     if (!Object.values(obj).includes("__empty__") && !isEmptyDSEntry(obj)){
       var row = {
         date:obj.date,
-        endTime:"",
+        endTime:"-",
         podcastName:obj.description,
-        episodeName:"",
+        episodeName:"-",
         totalMinPlayed:(secondsToMin(obj.timeSeconds))
       };
       displayData.push(row);   
@@ -285,25 +285,30 @@ function sendToDSUserSim(){
 
 
 // send HTTP requests to background to pass on to DS site
-async function sendHTTPRequestToDS(requestType, jsonDSData = []){
+async function sendHTTPRequestToDS(requestType, endPoint, jsonDSData = []){
    // COMMUNICATION
   chrome.runtime.sendMessage(
     {
       action: "DSHTTPRequest",
       requestType: requestType,
+      endPoint: endPoint,
       jsonEntries: jsonDSData
     },
-    (response) => {
-      if (!chrome.runtime.lastError) {
-        // if you have any response
-        console.log(response);
-        convertDSToDisplayData(response).then((data) => buildTableDisplay(data))
+    (response) => { // if you have any response
+      if (!chrome.runtime.lastError) {        
+        console.log("Response from background: ", response);
+
+        if (endPoint == "externalTime"){
+          convertDSToDisplayData(response.externalTimes).then(
+            (data) => buildTableDisplay(data)
+          );
+        }
         return true;
       } 
       else {
-          // if you don't have any response it's ok but you should actually handle
-          // it and we are doing this when we are examining chrome.runtime.lastError
-        console.log("NO response")
+        // if you don't have any response it's ok but you should actually handle
+        // it and we are doing this when we are examining chrome.runtime.lastError
+        console.log("NO response from background")
       }
     }  
   );
@@ -354,9 +359,14 @@ fileExportPOSTBtn.addEventListener('click', function(event) {
   sendHTTPRequestToDS("POST",tempJson);
 });
 
-// GET external DS time button
+// GET externalTime DS button
 getExternalTimeGETBtn.addEventListener('click', function(event) {
-  sendHTTPRequestToDS("GET");
+  sendHTTPRequestToDS("GET", "externalTime");
+});
+
+// GET internal DS time only button
+getDSOnlyHistGETBtn.addEventListener('click', function(event) {
+  sendHTTPRequestToDS("GET", "history");
 });
 
 
