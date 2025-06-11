@@ -28,9 +28,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     // Create a MutationObserver to watch for the "Add hours outside the platform" button
     const observer = new MutationObserver((mutations, observerInstance) => {
+      console.log(
+        "Dreaming Spanish Helper: Checking for 'Add hours outside the platform' button..."
+      );
+
       const addHoursButton = [...document.querySelectorAll("button")].find(
         (btn) =>
-          btn.textContent.trim().includes("Add hours outside the platform")
+          btn.textContent.trim().includes("Add time outside the platform")
       );
 
       if (addHoursButton) {
@@ -39,6 +43,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
         // Simulate a click on the "Add hours outside the platform" button
         addHoursButton.click();
+        console.log(
+          "Dreaming Spanish Helper: Clicked 'Add time outside the platform' button."
+        );
 
         // Now observe the DOM for the modal to appear
         const modalObserver = new MutationObserver(
@@ -48,6 +55,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             // Adjust the selector based on the actual modal structure
             const modal = document.querySelector(".modal"); // Replace with the actual modal selector if different
             if (modal) {
+              console.log("Dreaming Spanish Helper: Modal found!");
 
               // Stop observing once the modal is found
               modalObserverInstance.disconnect();

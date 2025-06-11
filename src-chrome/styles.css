@@ -1,0 +1,25 @@
+#file_open_area{
+    display: inline-block;
+}
+
+#file_input{
+    float: left;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#file_name_p{
+    float: right;
+    margin-left: 5px;
+    padding: 3px;
+}
+
+a.dt-datetime-today {
+  background-color: #ffe5b9 !important;  /* Yellow */
+  color: #000;
+  font-weight: bold;
+  border: 1px solid #999;
+  border-radius: 4px;
+  padding: 5.4px 5.4px;
+  margin: 2px;
+}

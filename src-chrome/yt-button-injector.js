@@ -4,7 +4,8 @@ window.onload = function () {
   // Function to create and inject the button
   function createButton() {
     // Prevent injecting multiple buttons
-    if (document.getElementById("dreaming-spanish-button")) return;
+    if (document.getElementById("dreaming-spanish-button")) 
+      return;
 
     // Set mode by url
     let mode = "youtube";
@@ -18,7 +19,7 @@ window.onload = function () {
 
     // Create the img element
     const img = document.createElement("img");
-    img.src = chrome.runtime.getURL("dreamingplus.png"); // Reference the image
+    img.src = chrome.runtime.getURL("add_icon.jpeg"); // Reference the image
     img.alt = "Add to Dreaming Spanish"; // Alt text for accessibility
 
     // Style the img to be rounded and fit within the button
@@ -59,7 +60,7 @@ window.onload = function () {
     if (controls) {
       if (mode === "youtube") {
         controls.style.display = "flex";
-        controls.insertBefore(button, controls.firstChild); // Insert at the beginning
+      controls.insertBefore(button, controls.firstChild); // Insert at the beginning
       }
       else {
         controls.parentElement.insertBefore(button, controls.parentElement.firstChild); // Insert at the beginning
@@ -72,11 +73,11 @@ window.onload = function () {
 
       let duration;
       if (mode === "youtube") {
-        // Get the video duration from YouTube player
-        const video = document.querySelector("video");
-        if (!video) {
-          return;
-        }
+      // Get the video duration from YouTube player
+      const video = document.querySelector("video");
+      if (!video) {
+        return;
+      }
         duration = Math.floor(video.duration / 60); // Convert to minutes
       }
       else if (mode === "spotify") {
@@ -100,18 +101,18 @@ window.onload = function () {
       let title = "Untitled";
       // Retrieve the video title
       if (mode === "youtube") {
-        const titleElement = document.querySelector("#above-the-fold #title");
+      const titleElement = document.querySelector("#above-the-fold #title");
         title = "Untitled Video"; // Default title if not found
-        if (titleElement) {
-          // Original title with \n and extra spaces
-          let rawTitle = titleElement.textContent.trim();
+      if (titleElement) {
+        // Original title with \n and extra spaces
+        let rawTitle = titleElement.textContent.trim();
 
-          // Clean the title by replacing multiple whitespace characters with a single space
-          let cleanTitle = rawTitle.replace(/\s+/g, " ");
+        // Clean the title by replacing multiple whitespace characters with a single space
+        let cleanTitle = rawTitle.replace(/\s+/g, " ");
 
-          title = cleanTitle;
-          console.log(title);
-        } else {
+        title = cleanTitle;
+        console.log(title);
+      } else {
         }
       }
       else if (mode === "spotify") {

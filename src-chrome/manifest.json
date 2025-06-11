@@ -1,9 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Dreaming Plus",
-  "version": "1.0.1",
-  "description": "Automatically add video hours to Dreaming Spanish from YouTube.",
-
+  "name": "Dreaming Spanish Importer Plus",
+  "version": "1.0.0",
+  "description": "Automatically add watch/listening history to Dreaming Spanish from a file, Youtube, or Spotify.",
   "background": {
     "service_worker": "background.js"
   },
