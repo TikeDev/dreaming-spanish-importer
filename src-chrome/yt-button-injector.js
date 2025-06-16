@@ -1,12 +1,25 @@
 console.log("[Dreaming Spanish Helper] Injecting button...");
 
 window.onload = function () {
-  // Function to create and inject the button
-  function createButton() {
+  function addHoverEffect(button){
+    // Optional: Add hover effect (e.g., slight opacity change)
+    button.onmouseover = () => {
+      button.style.opacity = "0.8";
+    };
+    button.onmouseout = () => {
+      button.style.opacity = "1";
+    };
+  }
+
+  function createPlaybackStripBtn(mode){
     // Prevent injecting multiple buttons
     if (document.getElementById("dreaming-spanish-button")) 
       return;
 
+  }
+
+  // Function to create and inject the button
+  function createButton() {
     // Set mode by url
     let mode = "youtube";
     if (window.location.href.includes("spotify")) {
@@ -55,13 +68,7 @@ window.onload = function () {
     button.style.marginLeft = "8px"; // Space between buttons
     button.style.outline = "none"; // Remove focus outline
 
-    // Optional: Add hover effect (e.g., slight opacity change)
-    button.onmouseover = () => {
-      button.style.opacity = "0.8";
-    };
-    button.onmouseout = () => {
-      button.style.opacity = "1";
-    };
+    addHoverEffect(button);
 
     // Append the button to the controls strip
     let controls = document.querySelector(".ytp-right-controls, [data-testid*=control-button-npv], button[aria-label*='Show Up Next']"); 
@@ -77,7 +84,7 @@ window.onload = function () {
      } else {
     }
 
-    // Button click event handler
+    // Playback controls button click event handler
     button.addEventListener("click", async (event) => {
 
       let duration;
@@ -109,7 +116,7 @@ window.onload = function () {
         const timer = document.querySelector('[data-testid="current-time"]');
         console.log("POCKETCASTS TIMER= " + timer.textContent);
 
-         if (!timer) {
+        if (!timer) {
           return;
         }
         const times = timer.textContent.split(":");
@@ -198,7 +205,8 @@ window.onload = function () {
      });
   }
 
-  // Function to observe DOM changes and inject the button when .ytp-right-controls is available
+  // watch for appearance of playback ctrl strip in DOM
+  // Function to observe DOM changes and inject the button when playback ctrl strip is available
   function observeDOM() {
     const targetNode = document.body;
     const config = { childList: true, subtree: true };
@@ -214,10 +222,12 @@ window.onload = function () {
       }
       lastExecutionTime = currentTime;
 
-      for (let mutation of mutationsList) {
+      // for each mutation observed, if there are ctrls but no DS button, create one 
+      for (let mutation of mutationsList) { 
         if (mutation.type === "childList") {
+          // check if there are controls
           const controls = document.querySelector(".ytp-right-controls, [data-testid*=control-button-npv], button[aria-label*='Show Up Next']");
-          if (controls && !document.getElementById("dreaming-spanish-button")) {
+          if (controls && !document.getElementById("dreaming-spanish-button")) { 
             createButton();
           }
         }
@@ -233,6 +243,7 @@ window.onload = function () {
 
   // Handle YouTube's Single Page Application (SPA) navigation
   // Listen for history changes to re-inject the button on new video loads
+  // every second check if url has changed. If so, create new buttons 
   let lastUrl = location.href;
   setInterval(() => {
     if (location.href !== lastUrl) {

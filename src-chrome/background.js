@@ -7,7 +7,7 @@
   chrome.tabs.create({ url: 'openCSVFile.html' }, function(tab) {
 });
  
-var bearerToken = 'enter bearer token here'
+const bearerToken = 'enter bearer token here'
 
 // POST DS loaded data directly to website
 async function postHTTPDSData(jsonObjArray, endPoint){
