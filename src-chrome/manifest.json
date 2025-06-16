@@ -24,6 +24,12 @@
         "https://dreamingspanish.com/*"
       ],
       "js": ["ds-time-adder.js"]
+    },
+    {
+      "matches": [
+        "https://www.youtube.com/feed/history*" 
+      ],
+      "js": ["yt-history-button-injector.js"]
     }
   ],
   "web_accessible_resources": [
