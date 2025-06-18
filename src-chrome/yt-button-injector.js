@@ -20,6 +20,9 @@ window.onload = function () {
 
   // Function to create and inject the button
   function createButton() {
+    // Prevent injecting multiple buttons
+    if (document.getElementById("dreaming-spanish-button")) return;
+
     // Set mode by url
     let mode = "youtube";
     if (window.location.href.includes("spotify")) {
@@ -43,6 +46,16 @@ window.onload = function () {
     img.style.borderRadius = "50%"; // Makes the image rounded
     img.style.display = "block";
     img.style.marginRight = "8px";
+
+    // Style the button to blend with YouTube's controls
+    button.style.background = "transparent"; // Transparent background
+    button.style.border = "none"; // No border
+    button.style.cursor = "pointer"; // Pointer cursor on hover
+    button.style.padding = "0"; // Remove default padding
+    button.style.marginLeft = "8px"; // Space between buttons
+    button.style.outline = "none"; // Remove focus outline
+
+
     // Different styling depending on platform
     if (mode === "youtube") {
       // img.style.marginTop = "-36px";
@@ -56,6 +69,12 @@ window.onload = function () {
     else if (mode === "pocketcasts") {
       img.style.width = "30px";
       img.style.height = "30px";
+      button.style.marginLeft = "25px"; // Space between buttons
+    }
+    else {
+      img.style.width = "24px";
+      img.style.height = "24px";
+
     }
     // Append the img to the button
     button.appendChild(img);
@@ -71,15 +90,18 @@ window.onload = function () {
     addHoverEffect(button);
 
     // Append the button to the controls strip
-    let controls = document.querySelector(".ytp-right-controls, [data-testid*=control-button-npv], button[aria-label*='Show Up Next']"); 
+    let controls = document.querySelector(".ytp-right-controls, [data-testid*=control-button-npv], div.controls-left", "div.controls__right"); 
 
     if (controls) {
       if (mode === "youtube") {
         controls.style.display = "flex";
         controls.insertBefore(button, controls.firstChild); // Insert at the beginning
       }
-      else {
+      else if (mode === "spotify") {
         controls.parentElement.insertBefore(button, controls.parentElement.firstChild); // Insert at the beginning
+      }
+      else if (mode === "pocketcasts") {
+        controls.append(button); // Insert at the end
       }
      } else {
     }
@@ -195,7 +217,7 @@ window.onload = function () {
        chrome.runtime.sendMessage(
         {
           action: "openDreamingSpanish",
-          videoDuration: duration,
+          videoDuration: (duration || 1), // can't submit 0 min, default 1 min
           tabUrl: tabUrl,
           title: title,
           author: author,
@@ -226,7 +248,7 @@ window.onload = function () {
       for (let mutation of mutationsList) { 
         if (mutation.type === "childList") {
           // check if there are controls
-          const controls = document.querySelector(".ytp-right-controls, [data-testid*=control-button-npv], button[aria-label*='Show Up Next']");
+          const controls = document.querySelector(".ytp-right-controls, [data-testid*=control-button-npv], div.controls-left");
           if (controls && !document.getElementById("dreaming-spanish-button")) { 
             createButton();
           }

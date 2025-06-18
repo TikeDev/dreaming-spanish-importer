@@ -11,9 +11,13 @@
       "matches": [
         "https://www.open.spotify.com/*",
         "https://www.spotify.com/*",
+        "https://open.spotify.com/*",
+        "https://spotify.com/*",
         "https://www.youtube.com/watch*", 
         "https://www.play.pocketcasts.com/*",
-        "https://www.pocketcasts.com/*"
+        "https://www.pocketcasts.com/*",
+        "https://play.pocketcasts.com/*",
+        "https://pocketcasts.com/*"
         ],
         
       "js": ["yt-button-injector.js"]
@@ -39,8 +43,13 @@
         "https://www.youtube.com/*",
         "https://www.open.spotify.com/*",
         "https://www.spotify.com/*",
+        "https://open.spotify.com/*",
+        "https://spotify.com/*",
         "https://www.play.pocketcasts.com/*",
-        "https://www.pocketcasts.com/*"]
+        "https://play.pocketcasts.com/*",
+        "https://www.pocketcasts.com/*",
+        "https://pocketcasts.com/*"
+      ]
     }
   ],
   "action": {}
