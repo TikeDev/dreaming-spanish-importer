@@ -24,6 +24,12 @@
     },
     {
       "matches": [
+        "https://www.disneyplus.com/play*",
+        "https://disneyplus.com/play*"
+      ],
+      "js": ["disneyplus-button-injector.js"]
+    },    {
+      "matches": [
         "https://www.dreamingspanish.com/*",
         "https://dreamingspanish.com/*"
       ],
@@ -48,7 +54,9 @@
         "https://www.play.pocketcasts.com/*",
         "https://play.pocketcasts.com/*",
         "https://www.pocketcasts.com/*",
-        "https://pocketcasts.com/*"
+        "https://pocketcasts.com/*",
+        "https://www.disneyplus.com/*",
+        "https://disneyplus.com/*"
       ]
     }
   ],
