@@ -4,10 +4,10 @@ window.onload = function () {
   function addHoverEffect(button){
     // Optional: Add hover effect (e.g., slight opacity change)
     button.onmouseover = () => {
-      button.style.opacity = "0.8";
+      button.style.opacity = "1";
     };
     button.onmouseout = () => {
-      button.style.opacity = "0.5";
+      button.style.opacity = "0.6";
     };
   }
  
@@ -25,26 +25,22 @@ window.onload = function () {
     img.src = chrome.runtime.getURL("dreamingplus.png"); // Reference the image
     img.alt = "Add to Dreaming Spanish"; // Alt text for accessibility
 
-    // Style the img to be rounded and fit within the button
+    // Styling depending on platform
     img.style.borderRadius = "50%"; // Makes the image rounded
-    img.style.display = "block";
-    img.style.marginRight = "8px";
+    img.style.width = "30px";
+    img.style.height = "30px";
 
     // Style the button to blend with YouTube's controls
     button.style.background = "transparent"; // Transparent background
     button.style.border = "none"; // No border
     button.style.cursor = "pointer"; // Pointer cursor on hover
     button.style.padding = "0"; // Remove default padding
-    button.style.marginLeft = "8px"; // Space between buttons
+    button.style.marginRight = "14px"; // Space between buttons
     button.style.outline = "none"; // Remove focus outline
-    button.style.opacity = "0.5"; // Match opacity of other buttons
+    button.style.opacity = "0.6"; // Match opacity of other buttons
     button.style.pointerEvents = "auto";
     button.style.transition = "0.2s ease";
 
-
-    // Different styling depending on platform
-    img.style.width = "24px";
-    img.style.height = "24px";
 
     // Append the img to the button
     button.appendChild(img);
@@ -52,36 +48,58 @@ window.onload = function () {
     // Add hover effect
     addHoverEffect(button);
 
-    // Append the button to the controls strip
+    // Append the button to the right controls strip
     let controls = document.querySelector(".controls__right"); 
 
     if (controls) {
-        //controls = webPlayerUI.shadowRoot;
         let btnContainer = document.createElement("div");
         btnContainer.style.display = "flex";
         btnContainer.style.justifyContent = "center";
 
         btnContainer.append(button);
-        controls.append(btnContainer); // Insert at the end
+        controls.insertBefore(btnContainer, controls.firstChild); // Insert at the beginning
       } else {
     }
 
     // Playback controls button click event handler
-    button.addEventListener("click", async (event) => {
-      let duration;
-      // Get the video duration from Disney Plus player
+    button.addEventListener("click", async (event) => {      
+      button.blur(); // Remove focus to prevent spacebar re-trigger
 
-      
-      // Get the current tab's URL
+      // URL - Get the current tab's URL
       let tabUrl = window.location.href;
 
-      let title = "Untitled";
-      // Retrieve the video title
+      //DURATION - Get video duration watched from Disney Plus player
+      let duration;
+      let slider = document.querySelector(".slider-container");
+      if (slider) {
+        let watchedSecs = slider.getAttribute("aria-valuenow"); // get in seconds
+        duration = Math.floor(parseInt(watchedSecs) / 60); // Convert to minutes
+      }
+        console.log("DURATION: " + duration);
+   
 
+      // TITLE - Retrieve the episode title
+      let title = "Untitled";
+
+      const titleElement = document.querySelector(".subtitle-field");
+      if (titleElement) {
+        // Original title with \n and extra spaces
+        let rawTitle = titleElement.textContent.trim();
+        // Clean the title by replacing multiple whitespace characters with a single space
+        let cleanTitle = rawTitle.replace(/\s+/g, " ");
+        title = cleanTitle;
+      }
+        console.log("TITLE: " + title);
       
-      // Get the content creator's name
+
+      // AUTHOR - Get show name
       let author = "Unknown Author";
 
+      const authorElement = document.querySelector('.title-field.body-copy');
+      if (authorElement) {
+        author = authorElement.textContent;
+      }
+      console.log("AUTHOR: " + author);
 
       // Send message to the background script with the video duration, title, and tab URL
        chrome.runtime.sendMessage(
