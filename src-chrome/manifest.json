@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Dreaming Spanish (Youtube/Spotify/Pocket Casts/CSV File) Importer",
+  "name": "Dreaming Spanish Importer",
   "version": "1.0.0",
-  "description": "Automatically add watch/listening history to Dreaming Spanish from a file, Youtube, Spotify, or Pocket Casts.",
+  "description": "Automatically add watch/listening history to Dreaming Spanish from a file, Youtube, Spotify, Pocket Casts, or Disney Plus.",
   "background": {
     "service_worker": "background.js"
   },
