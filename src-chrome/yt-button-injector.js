@@ -11,13 +11,8 @@ window.onload = function () {
     };
   }
 
-  function createPlaybackStripBtn(mode){
-    // Prevent injecting multiple buttons
-    if (document.getElementById("dreaming-spanish-button")) 
-      return;
 
-  }
-
+ 
   // Function to create and inject the button
   function createButton() {
     // Prevent injecting multiple buttons
@@ -79,18 +74,11 @@ window.onload = function () {
     // Append the img to the button
     button.appendChild(img);
 
-    // Style the button to blend with YouTube's controls
-    button.style.background = "transparent"; // Transparent background
-    button.style.border = "none"; // No border
-    button.style.cursor = "pointer"; // Pointer cursor on hover
-    button.style.padding = "0"; // Remove default padding
-    button.style.marginLeft = "8px"; // Space between buttons
-    button.style.outline = "none"; // Remove focus outline
 
     addHoverEffect(button);
 
     // Append the button to the controls strip
-    let controls = document.querySelector(".ytp-right-controls, [data-testid*=control-button-npv], div.controls-left", "div.controls__right"); 
+    let controls = document.querySelector(".ytp-right-controls, [data-testid*=control-button-npv], div.controls-left"); 
 
     if (controls) {
       if (mode === "youtube") {
@@ -102,8 +90,9 @@ window.onload = function () {
       }
       else if (mode === "pocketcasts") {
         controls.append(button); // Insert at the end
+        button.style.zIndex = "2";
       }
-     } else {
+      } else {
     }
 
     // Playback controls button click event handler
