@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Dreaming Spanish Importer",
   "version": "1.0.0",
-  "description": "Automatically add watch/listening history to Dreaming Spanish from a file, Youtube, Spotify, Pocket Casts, or Disney Plus.",
+  "description": "Automatically add watch/listening history to Dreaming Spanish from a file, Youtube, Spotify, Pocket Casts, Disney Plus, or Netflix.",
   "background": {
     "service_worker": "background.js"
   },
@@ -28,7 +28,15 @@
         "https://disneyplus.com/play*"
       ],
       "js": ["disneyplus-button-injector.js"]
-    },    {
+    },    
+    {
+      "matches": [
+        "https://www.netflix.com/watch*",
+        "https://netflix.com/watch*"
+      ],
+      "js": ["netflix-button-injector.js"]
+    },    
+    {
       "matches": [
         "https://www.dreamingspanish.com/*",
         "https://dreamingspanish.com/*"
@@ -56,7 +64,9 @@
         "https://www.pocketcasts.com/*",
         "https://pocketcasts.com/*",
         "https://www.disneyplus.com/*",
-        "https://disneyplus.com/*"
+        "https://disneyplus.com/*",
+        "https://www.netflix.com/*",
+        "https://netflix.com/*"
       ]
     }
   ],
