@@ -12,7 +12,6 @@ window.onload = function () {
   }
 
 
- 
   // Function to create and inject the button
   function createButton() {
     // Prevent injecting multiple buttons
@@ -22,10 +21,6 @@ window.onload = function () {
     let mode = "youtube";
     if (window.location.href.includes("spotify")) {
       mode = "spotify";
-    }
-    else if (window.location.href.includes("pocketcasts")) {
-      console.log("FOUND POCKET CASTS");
-      mode = "pocketcasts";
     }
 
     // Create the button element
@@ -61,11 +56,6 @@ window.onload = function () {
       img.style.width = "20px";
       img.style.height = "20px";
     }
-    else if (mode === "pocketcasts") {
-      img.style.width = "30px";
-      img.style.height = "30px";
-      button.style.marginLeft = "25px"; // Space between buttons
-    }
     else {
       img.style.width = "24px";
       img.style.height = "24px";
@@ -78,7 +68,7 @@ window.onload = function () {
     addHoverEffect(button);
 
     // Append the button to the controls strip
-    let controls = document.querySelector(".ytp-right-controls, [data-testid*=control-button-npv], div.controls-left"); 
+    let controls = document.querySelector(".ytp-right-controls, [data-testid*=control-button-npv]"); 
 
     if (controls) {
       if (mode === "youtube") {
@@ -87,10 +77,6 @@ window.onload = function () {
       }
       else if (mode === "spotify") {
         controls.parentElement.insertBefore(button, controls.parentElement.firstChild); // Insert at the beginning
-      }
-      else if (mode === "pocketcasts") {
-        controls.append(button); // Insert at the end
-        button.style.zIndex = "2";
       }
       } else {
     }
@@ -121,25 +107,6 @@ window.onload = function () {
           duration = parseInt(times[0], 10) * 60 + parseInt(times[1], 10);
         }
       }
-      else if (mode === "pocketcasts") {
-        event.stopPropagation(); //prevent existing elements' listeners from interfering with click event
-        // Get the duration from PocketCasts player
-        const timer = document.querySelector('[data-testid="current-time"]');
-        console.log("POCKETCASTS TIMER= " + timer.textContent);
-
-        if (!timer) {
-          return;
-        }
-        const times = timer.textContent.split(":");
-        if (times.length === 2) {
-          duration = parseInt(times[0], 10);
-        }
-        else if (times.length === 3) {
-          duration = parseInt(times[0], 10) * 60 + parseInt(times[1], 10);
-        } 
-        console.log("POCKETCASTS DURATION= " + duration);
-
-      }
  
       // Get the current tab's URL
       let tabUrl = window.location.href;
@@ -169,15 +136,6 @@ window.onload = function () {
         }
         tabUrl = document.querySelector('a[data-testid="context-item-link"]').href; // grab episode link
       }
-      else if (mode === "pocketcasts") {
-        const titleElement = document.querySelector('.episode-title.player_episode');
-        title = "Untitled Track"; // Default title if not found
-        if (titleElement) {
-          title = titleElement.textContent;
-          console.log("POCKETCASTS TITLE= " + title);
-        }
-        tabUrl = document.querySelector("a[class*='episode-title player_episode']").href; // grab episode link
-      }
  
       // Get the content creator's name
       let author = "Unknown Author";
@@ -192,13 +150,6 @@ window.onload = function () {
         const authorElement = document.querySelector('[data-testid="context-item-info-show"]');
         if (authorElement) {
           author = authorElement.textContent;
-        }
-      }
-       else if (mode === "pocketcasts") { 
-        const authorElement = document.querySelector('.podcast-title.player_podcast_title');
-        if (authorElement) {
-          author = authorElement.textContent;
-          console.log("POCKETCASTS AUTHOR= " + author);
         }
       }
  
@@ -237,7 +188,7 @@ window.onload = function () {
       for (let mutation of mutationsList) { 
         if (mutation.type === "childList") {
           // check if there are controls
-          const controls = document.querySelector(".ytp-right-controls, [data-testid*=control-button-npv], div.controls-left");
+          const controls = document.querySelector(".ytp-right-controls, [data-testid*=control-button-npv]");
           if (controls && !document.getElementById("dreaming-spanish-button")) { 
             createButton();
           }
