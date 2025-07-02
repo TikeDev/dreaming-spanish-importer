@@ -1,6 +1,10 @@
 console.log("[Dreaming Languages Importer] Injecting button...");
 
 window.onload = function () {
+  let controlsSelector = 'button[aria-label="Full screen"]';  // element to ultimately inject button into
+  let buttonID = "dreaming-spanish-button"; // DS button ID
+  //let buttonSelector = `#${buttonID}`;      // DS button selector
+
   function addHoverScaleEffect(button){
     // Optional: Add hover effect (e.g., size increase animation)
     button.onmouseover = () => {
@@ -10,15 +14,78 @@ window.onload = function () {
       button.style.transform = "scale(1.0)";
     };
   }
- 
+
+  // check if ready to inject button to relevant container element
+  function shouldInject(containerSel, buttonId) {
+    const container = document.querySelector(containerSel);
+    const buttonExists = document.getElementById(buttonId);
+
+    return (container && !buttonExists && location.pathname.startsWith('/watch'));
+  }
+
+  function grabEntryDataAndSend(button){
+    button.blur(); // Remove focus to prevent spacebar re-trigger
+
+    // URL - Get the current tab's URL
+    let tabUrl = window.location.href.split("?")[0];
+    console.log("[NETFLIX] VIDEO URL: " + tabUrl);
+
+
+    //DURATION - Calculate video duration watched from time scrubber aria value
+    let duration;
+    let slider = document.querySelector('button[aria-label="Seek time scrubber"]'); 
+    if (slider) {
+      let watchedMSecs = parseInt(slider.getAttribute("aria-valuenow")); // get in msec
+      duration = Math.floor(watchedMSecs / 1000 / 60); // Convert to minutes
+    }
+    console.log("[NETFLIX] VIDEO DURATION: " + duration);
+  
+
+    // TITLE - Retrieve the episode title
+    let title = "Untitled";
+    const titleBar = document.querySelector('[data-uia="video-title"]');
+    if (titleBar) {
+      // Original title with \n and extra spaces
+      let episode = titleBar.querySelectorAll('span');
+      title = episode[0].textContent.trim() + ": " + episode[1].textContent.trim();
+    }
+    console.log("[NETFLIX] VIDEO TITLE: " + title);
+    
+
+    // AUTHOR - Get show name
+    let author = "Unknown Author";
+    let showElement = titleBar.querySelector('h4');
+    if (showElement) {
+      author = showElement.textContent.trim();
+    }
+    console.log("[NETFLIX] VIDEO AUTHOR: " + author);
+
+
+    // Send message to the background script with the video duration, title, and tab URL
+      chrome.runtime.sendMessage(
+      {
+        action: "openDreamingSpanish",
+        videoDuration: (duration || 1), // can't submit 0 min, default 1 min
+        tabUrl: tabUrl,
+        title: title,
+        author: author,
+      },
+      (response) => {}
+    );
+  }
+
   // Function to create and inject the button
   function createButton() {
     // Prevent injecting multiple buttons
-    if (document.getElementById("dreaming-spanish-button")) return;
+    if (document.getElementById(buttonID)) return;
+
+    let controls = document.querySelector(controlsSelector); 
+    if (!controls) 
+      return;
 
     // Create the button element
     const button = document.createElement("button");
-    button.id = "dreaming-spanish-button"; // Assign a unique ID
+    button.id = buttonID; // Assign a unique ID
 
     // Create the img element
     const img = document.createElement("img");
@@ -49,102 +116,41 @@ window.onload = function () {
     addHoverScaleEffect(button);
 
     // Append the button to the right controls strip
-    let controls = document.querySelector('button[aria-label="Full screen"]'); 
+    let btnContainer = document.createElement("div");
+    btnContainer.style.display = "flex";
+    btnContainer.style.justifyContent = "center";
+    btnContainer.append(button);
 
-    if (controls) {
-        let btnContainer = document.createElement("div");
-        btnContainer.style.display = "flex";
-        btnContainer.style.justifyContent = "center";
-        btnContainer.append(button);
-
-        let controlsContainer = controls.parentElement.parentElement;
-        controlsContainer.insertBefore(btnContainer, controlsContainer.lastChild);
-      } else {
-    }
+    let controlsContainer = controls.parentElement.parentElement;
+    controlsContainer.insertBefore(btnContainer, controlsContainer.lastChild);
 
     // Playback controls button click event handler
-      button.addEventListener("click", async (event) => {      
-      button.blur(); // Remove focus to prevent spacebar re-trigger
-
-      // URL - Get the current tab's URL
-      let tabUrl = window.location.href.split("?")[0];
-
-      //DURATION - Get video duration watched from time scrubber
-      let duration;
-      let slider = document.querySelector('button[aria-label="Seek time scrubber"]'); 
-      if (slider) {
-        let watchedSecs = parseInt(slider.getAttribute("aria-valuenow")); // get in milliseconds
-        duration = Math.floor(watchedSecs / 1000 / 60); // Convert to minutes
-      }
-        console.log("DURATION: " + duration);
-   
-
-      // TITLE - Retrieve the episode title
-      let title = "Untitled";
-      const titleBar = document.querySelector('[data-uia="video-title"]');
-
-      if (titleBar) {
-        // Original title with \n and extra spaces
-        let episode = titleBar.querySelectorAll('span');
-        title = episode[0].textContent.trim() + ": " + episode[1].textContent.trim();
-      }
-      console.log("TITLE: " + title);
-      
-
-      // AUTHOR - Get show name
-      let author = "Unknown Author";
-      let showElement = titleBar.querySelector('h4');
-
-      if (showElement) {
-        author = showElement.textContent.trim();
-      }
-      console.log("AUTHOR: " + author);
-
-      // Send message to the background script with the video duration, title, and tab URL
-       chrome.runtime.sendMessage(
-        {
-          action: "openDreamingSpanish",
-          videoDuration: (duration || 1), // can't submit 0 min, default 1 min
-          tabUrl: tabUrl,
-          title: title,
-          author: author,
-        },
-        (response) => {}
-      );
+    button.addEventListener("click", async (event) => {      
+        grabEntryDataAndSend(button);
      });
    }
 
-  // watch for appearance of playback ctrl strip in DOM
-  // Function to observe DOM changes and inject the button when playback ctrl strip is available
-  function observeDOM() {
+  // Function to observe and wait until DOM mutation activity
+  // dies down, then check for right controls and inject button
+  function observeDOM(){
     const targetNode = document.body;
     const config = { childList: true, subtree: true };
-    let lastExecutionTime = 0;
-    const timeout = 3000;
+    let debounceTimerId, debounceDuration = 500;
 
-    const callback = function (mutationsList, observer) {
-
-      // Delay to avoid overdoing page traversal
-      const currentTime = Date.now();
-      if ((currentTime - lastExecutionTime) < timeout) {
-        return;
+    const observer = new MutationObserver(() => {
+      clearTimeout(debounceTimerId);
+      // wait until mutations die down to check for controls
+      debounceTimerId = setTimeout(() => {
+      if(shouldInject(controlsSelector, buttonID)){
+        createButton();
       }
-      lastExecutionTime = currentTime;
+      }, debounceDuration);
+    });
 
-      // for each mutation observed, if there are ctrls but no DS button, create one 
-      for (let mutation of mutationsList) { 
-        if (mutation.type === "childList") {
-          // check if there are controls
-          const controls = document.querySelector('button[aria-label="Full screen"]');
-          if (controls && !document.getElementById("dreaming-spanish-button")) { 
-            createButton();
-          }
-        }
-      }
-    };
-
-    const observer = new MutationObserver(callback);
     observer.observe(targetNode, config);
+    if(shouldInject(controlsSelector, buttonID)){
+      createButton();
+    }
   }
 
   createButton();
@@ -158,7 +164,9 @@ window.onload = function () {
   setInterval(() => {
     if (location.href !== lastUrl) {
       lastUrl = location.href;
-      createButton();
+      if(shouldInject(controlsSelector, buttonID)){
+        createButton();
+      }
     }
   }, 1000);
 };

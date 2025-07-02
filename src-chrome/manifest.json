@@ -9,14 +9,24 @@
   "content_scripts": [
     {
       "matches": [
+        "https://www.youtube.com/*" 
+        ],        
+      "js": ["yt-button-injector.js"]
+    },
+    {
+      "matches": [
+        "https://www.youtube.com/feed/history*" 
+      ],
+      "js": ["yt-history-button-injector.js"]
+    },    
+    {
+      "matches": [
         "https://www.open.spotify.com/*",
         "https://www.spotify.com/*",
         "https://open.spotify.com/*",
-        "https://spotify.com/*",
-        "https://www.youtube.com/watch*" 
-        ],
-        
-      "js": ["yt-button-injector.js"]
+        "https://spotify.com/*"
+      ],
+      "js": ["spotify-button-injector.js"]
     },
     {
       "matches": [
@@ -29,15 +39,15 @@
     },    
     {
       "matches": [
-        "https://www.disneyplus.com/play*",
-        "https://disneyplus.com/play*"
+        "https://www.disneyplus.com/*",
+        "https://disneyplus.com/*"
       ],
       "js": ["disneyplus-button-injector.js"]
     },    
     {
       "matches": [
-        "https://www.netflix.com/watch*",
-        "https://netflix.com/watch*"
+        "https://www.netflix.com/*",
+        "https://netflix.com/*"
       ],
       "js": ["netflix-button-injector.js"]
     },    
@@ -47,13 +57,7 @@
         "https://dreamingspanish.com/*"
       ],
       "js": ["ds-time-adder.js"]
-    },
-    {
-      "matches": [
-        "https://www.youtube.com/feed/history*" 
-      ],
-      "js": ["yt-history-button-injector.js"]
-    }
+    }  
   ],
   "web_accessible_resources": [
     {
