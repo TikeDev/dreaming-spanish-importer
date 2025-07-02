@@ -1,11 +1,11 @@
 console.log("[Dreaming Languages Importer] Injecting button...");
 
 window.onload = function () {
-  let controlsSelector = ".ytp-right-controls";  // element to ultimately inject button into
-  let buttonID = "dreaming-spanish-np-button"; // DS button ID
-  let buttonSelector = `#${buttonID}`;      // DS button selector
-
-
+  let controlsSelector = "[data-testid*=control-button-npv]";  // element to ultimately inject button into
+  let buttonID = "dreaming-spanish-np-button";                 // DS button ID
+  let buttonSelector = `#${buttonID}`;                         // DS button selector
+  
+  
   function addHoverEffect(button){
     // Optional: Add hover effect (e.g., slight opacity change)
     button.onmouseover = () => {
@@ -16,56 +16,60 @@ window.onload = function () {
     };
   }
 
+  // convert hh:mm:ss, mm:ss, or :ss string to seconds
+  function timeStrToSeconds(timeStr) {
+    const parts = timeStr.trim().split(':').map(Number);
+    return parts.length === 3
+      ? parts[0]*3600 + parts[1]*60 + parts[2]
+      : parts.length === 2
+      ? parts[0]*60 + parts[1]
+      : parts[0];
+  }
+
   // check if right URL and ready to inject button to relevant container element
   function shouldInject(containerSel, buttonId) {
     const container = document.querySelector(containerSel);
     const buttonExists = document.getElementById(buttonId);
 
-    return (container && !buttonExists && location.pathname.startsWith('/watch'));
+    return (container && !buttonExists);
   }
 
   function grabEntryDataAndSend(button){
-    let duration;
-    // Get the video duration from YouTube player video element
-    const video = document.querySelector("video");
-    if (!video) {
+    button.blur(); // Remove focus to prevent spacebar re-trigger
+
+    //DURATION - Get listened to so far duration from Spotify player
+    const timer = document.querySelector('[data-testid="playback-duration"]');
+    if (!timer) {
       return;
     }
-    duration = Math.floor(video.currentTime / 60); // Convert to minutes
-    console.log("[YOUTUBE] VIDEO DURATION: " + duration + " min");
+    const duration = Math.floor(timeStrToSeconds(timer.textContent) / 60); // get in minutes
+    console.log("[SPOTIFY] TRACK DURATION: " + duration + " min");
 
-    // Get the current tab's URL
-    let tabUrl = window.location.href;
-    console.log("[YOUTUBE] TRACK URL: " + tabUrl);
 
-    
-    let title = "Untitled";
-    // Retrieve the video title
-    const titleElement = document.querySelector("#above-the-fold #title");
-    title = "Untitled Video"; // Default title if not found
+    // TITLE - Retrieve the track title
+    let title = "Untitled Track";
+    const titleElement = document.querySelector('[data-testid="context-item-link"]');
     if (titleElement) {
-      // Original title with \n and extra spaces
-      let rawTitle = titleElement.textContent.trim();
-
-      // Clean the title by replacing multiple whitespace characters with a single space
-      let cleanTitle = rawTitle.replace(/\s+/g, " ");
-
-      title = cleanTitle;
-    } else {
+      title = titleElement.textContent;
     }
-    console.log("[YOUTUBE] TRACK TITLE: " + title);
+    console.log("[SPOTIFY] TRACK TITLE: " + title);
 
-    // Get the content creator's name
+
+    // URL - Get the current track's URL
+    let tabUrl = titleElement.href; // grab episode link
+    console.log("[SPOTIFY] TRACK URL: " + tabUrl);
+
+    // AUTHOR - Get the content creator's name
     let author = "Unknown Author";
-    const authorElement = document.querySelector("a[class*='yt-simple-endpoint style-scope yt-formatted-string']");
+    const authorElement = document.querySelector('[data-testid="context-item-info-show"]');
     if (authorElement) {
-      author = authorElement.innerText;
+      author = authorElement.textContent;
     }
-    console.log("[YOUTUBE] TRACK AUTHOR: " + author);
+    console.log("[SPOTIFY] TRACK AUTHOR: " + author);
 
-
+      
     // Send message to the background script with the video duration, title, and tab URL
-    chrome.runtime.sendMessage(
+      chrome.runtime.sendMessage(
       {
         action: "openDreamingSpanish",
         videoDuration: (duration || 1), // can't submit 0 min, default 1 min
@@ -77,14 +81,15 @@ window.onload = function () {
     );
   }
 
-  // Function to create and inject the button
+  // Function to create and inject the Now Playing button
   function createButton() {
     // Prevent injecting multiple buttons
-    if (document.getElementById(buttonID)) return;
+    if (document.getElementById(buttonID)) return; // Now Playing button
 
     let controls = document.querySelector(controlsSelector); 
-    if (!controls)
-      return;
+    if (!controls){
+      return; 
+    }
 
     // Create the button element
     const button = document.createElement("button");
@@ -98,26 +103,23 @@ window.onload = function () {
     // Style the img to be rounded and fit within the button
     img.style.borderRadius = "50%"; // Makes the image rounded
     img.style.display = "block";
-    img.style.marginLeft = "10px";
-    img.style.marginRight = "10px";
-    img.style.width = "24px";
-    img.style.height = "24px";
+    img.style.marginRight = "8px";
+    img.style.width = "20px";
+    img.style.height = "20px";
 
     // Style the button to blend with YouTube's controls
     button.style.background = "transparent"; // Transparent background
     button.style.border = "none"; // No border
     button.style.cursor = "pointer"; // Pointer cursor on hover
     button.style.padding = "0"; // Remove default padding
-    //button.style.marginLeft = "8px"; // Space between buttons
+    button.style.marginLeft = "8px"; // Space between buttons
     button.style.outline = "none"; // Remove focus outline
 
-    // Append img to the button
+    // Append the img to the button
     button.appendChild(img);
     addHoverEffect(button);
 
-    // Append the button to the controls strip
-    controls.style.display = "flex";
-    controls.insertBefore(button, controls.firstChild); // Insert at the beginning
+    controls.parentElement.insertBefore(button, controls.parentElement.firstChild); // Insert at the beginning
 
     // Playback controls button click event handler
     button.addEventListener("click", async (event) => {
@@ -125,8 +127,8 @@ window.onload = function () {
      });
   }
 
-  // watch for appearance of playback ctrl strip in DOM
-  // Function to observe DOM changes and inject the button when playback ctrl strip is available
+  // Function to observe and wait until DOM mutation activity
+  // dies down, then check for left controls and inject button
   function observeDOM() {
     const targetNode = document.body;
     const config = { childList: true, subtree: true };
@@ -134,7 +136,6 @@ window.onload = function () {
     const timeout = 800;
 
     const callback = function (mutationsList, observer) {
-
       // Delay to avoid overdoing page traversal
       const currentTime = Date.now();
       if ((currentTime - lastExecutionTime) < timeout) {
@@ -145,7 +146,8 @@ window.onload = function () {
       // for each mutation observed, if there are ctrls but no DS button, create one 
       for (let mutation of mutationsList) { 
         if (mutation.type === "childList") {
-          // check if good to inject
+          // check if there are controls
+          const controls = document.querySelector(controlsSelector);
           if (shouldInject(controlsSelector, buttonID)) {
             createButton();
           }
@@ -160,16 +162,14 @@ window.onload = function () {
   createButton();
   observeDOM();
 
-  // Handle YouTube's Single Page Application (SPA) navigation
-  // Listen for history changes to re-inject the button on new video loads
+  // Handle Spotify's Single Page Application (SPA) navigation
+  // Listen for history changes to re-inject the button
   // every second check if url has changed. If so, create new buttons 
   let lastUrl = location.href;
   setInterval(() => {
     if (location.href !== lastUrl) {
-      lastUrl = location.href;
-      if (shouldInject(controlsSelector, buttonID)) {
-        createButton();
-      }
+      lastUrl = location.href;     
+      createButton();
     }
-  }, 1000);
+  }, 1000); 
 };
