@@ -1,9 +1,14 @@
 console.log("[Dreaming Languages Importer] Injecting button...");
 
 window.onload = function () {
-  let controlsSelector = ".ytp-right-controls";  // element to ultimately inject button into
-  let buttonID = "dreaming-spanish-np-button"; // DS button ID
-  let buttonSelector = `#${buttonID}`;      // DS button selector
+  let controlsSelector = ".ytp-right-controls"; // element to ultimately inject button into
+  let buttonID = "dreaming-spanish-np-button";  // DS button ID
+  let buttonSelector = `#${buttonID}`;          // DS button selector
+
+  // history page
+  let listContainerSelector = "#byline-container";   // element to ultimately inject history button into
+  let listButtonID = "dreaming-spanish-hist-button"; // history page DS button ID
+  let histElementsArray = [];
 
 
   function addHoverEffect(button){
@@ -16,6 +21,23 @@ window.onload = function () {
     };
   }
 
+  // convert hh:mm:ss, mm:ss, or :ss string to seconds
+  function timeStrToSeconds(timeStr) {
+    const parts = timeStr.trim().split(':').map(Number);
+    return parts.length === 3
+      ? parts[0]*3600 + parts[1]*60 + parts[2]
+      : parts.length === 2
+      ? parts[0]*60 + parts[1]
+      : parts[0];
+  }
+
+  // get time in seconds from youtube video link
+  function getTimeWatchedFromUrl(videoUrl){
+    let timeWatched = parseInt(videoUrl.split("&t=")[1])
+    console.log("timeWatched from url:" +timeWatched);
+    return timeWatched;
+  }
+
   // check if right URL and ready to inject button to relevant container element
   function shouldInject(containerSel, buttonId) {
     const container = document.querySelector(containerSel);
@@ -24,23 +46,111 @@ window.onload = function () {
     return (container && !buttonExists && location.pathname.startsWith('/watch'));
   }
 
+  // history page - check to see if right URL and if there are still list buttons left to inject
+  function shouldInjectHist(elementsArray) {
+    const listButtonsExists = document.querySelector(`[id^='${listButtonID}-${elementsArray.length-1}']`);
+
+    return (
+      location.pathname.startsWith('/feed/history')
+      && elementsArray 
+      && !listButtonsExists
+    )          
+  }
+
+  // Date object to YYYY-MM-DD
+  function formatDate(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");  // Months are 0-indexed
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+
+  // get date from the day listed
+  function ytWatchedDayToDateString(label, locale = 'en') {
+    const now = new Date();
+    const lower = label.toLowerCase().replace(",", "").trim();
+
+    // Relative days mapping per locale
+    const relativeDates = {
+      en: { today: 0, yesterday: 1 },
+      es: { hoy: 0, ayer: 1 }
+    };
+
+    const weekdays = {
+      en: ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"],
+      es: ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"]
+    };
+
+    const months = {
+      en: {
+        jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
+        jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11
+      },
+      es: {
+        ene: 0, feb: 1, mar: 2, abr: 3, may: 4, jun: 5,
+        jul: 6, ago: 7, sep: 8, oct: 9, nov: 10, dic: 11
+      }
+    };
+
+    const rel = relativeDates[locale];
+    if (rel && lower in rel) {
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate() - rel[lower]);
+    }
+
+    const weekdayList = weekdays[locale];
+    const weekdayIndex = weekdayList.indexOf(lower);
+    if (weekdayIndex !== -1) {
+      const todayIndex = now.getDay();
+      let daysAgo = (todayIndex - weekdayIndex + 7) % 7;
+      if (daysAgo === 0) daysAgo = 7;
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate() - daysAgo);
+    }
+
+    // Split label into parts
+    const parts = lower.split(" ");
+    if (parts.length < 2) return null;
+
+    const localeMonths = months[locale];
+
+    // Handle both "Jun 23" and "23 Jun"
+    let day, month, year = now.getFullYear();
+
+    // Case: "23 Jun" or "23 Jun 2018"
+    if (!isNaN(parts[0])) {
+      day = parseInt(parts[0]);
+      month = localeMonths[parts[1].slice(0, 3)];
+      if (parts[2]) year = parseInt(parts[2]);
+    }
+    else {
+      month = localeMonths[parts[0].slice(0, 3)];
+      day = parseInt(parts[1]);
+      if (parts[2]) year = parseInt(parts[2]);
+    }
+
+    if (day != null && month != null) {
+      return new Date(year, month, day);
+    }
+
+    return null;
+  }
+
   function grabEntryDataAndSend(button){
-    let duration;
-    // Get the video duration from YouTube player video element
     const video = document.querySelector("video");
     if (!video) {
       return;
     }
-    duration = Math.floor(video.currentTime / 60); // Convert to minutes
+
+    //DURATION - Get the current time watched from YouTube player video element
+    let duration = Math.floor(video.currentTime / 60); // Convert to minutes
     console.log("[YOUTUBE] VIDEO DURATION: " + duration + " min");
 
-    // Get the current tab's URL
+    // URL - Get the current tab's URL
     let tabUrl = window.location.href;
-    console.log("[YOUTUBE] TRACK URL: " + tabUrl);
+    console.log("[YOUTUBE] VIDEO URL: " + tabUrl);
 
     
+    // TITLE - Retrieve the video title
     let title = "Untitled";
-    // Retrieve the video title
     const titleElement = document.querySelector("#above-the-fold #title");
     title = "Untitled Video"; // Default title if not found
     if (titleElement) {
@@ -53,15 +163,15 @@ window.onload = function () {
       title = cleanTitle;
     } else {
     }
-    console.log("[YOUTUBE] TRACK TITLE: " + title);
+    console.log("[YOUTUBE] VIDEO TITLE: " + title);
 
-    // Get the content creator's name
+      // AUTHOR - Get the channel name
     let author = "Unknown Author";
     const authorElement = document.querySelector("a[class*='yt-simple-endpoint style-scope yt-formatted-string']");
     if (authorElement) {
       author = authorElement.innerText;
     }
-    console.log("[YOUTUBE] TRACK AUTHOR: " + author);
+    console.log("[YOUTUBE] VIDEO AUTHOR: " + author);
 
 
     // Send message to the background script with the video duration, title, and tab URL
@@ -76,6 +186,76 @@ window.onload = function () {
       (response) => {}
     );
   }
+
+    function grabEntryDataAndSendHist(button){
+    let closestAncestor = button.closest('#dismissible');
+    
+    // DATE - walk up the DOM to find the day title
+    let daySectionElement = closestAncestor.closest("ytd-item-section-renderer.ytd-section-list-renderer");
+    let dayTitleElement = daySectionElement.querySelector("div#title.style-scope.ytd-item-section-header-renderer");
+    let ytDayWatched = dayTitleElement.textContent.trim();  // Ex. "Today" "Tuesday" "Jun 23" or "23 Jun"
+
+    let locale = document.head.querySelector('link[rel="search"]').href.split("?locale=")[1]; // "en_US", "en_GB", "es_MX"...
+    let dayWatched = ytWatchedDayToDateString(ytDayWatched, locale.split("_")[0]);
+    dayWatched = formatDate(dayWatched);  // YYYY-MM-DD
+
+
+    // TITLE - Retrieve the video title
+    let title = "Untitled";
+    const titleElement = closestAncestor.querySelector("#video-title");
+    title = "Untitled Video"; // Default title if not found
+    if (titleElement) {
+      // Original title with \n and extra spaces
+      let rawTitle = titleElement.textContent.trim();
+      // Clean the title by replacing multiple whitespace characters with a single space
+      let cleanTitle = rawTitle.replace(/\s+/g, " ");
+      title = cleanTitle;
+    }
+    console.log("[YOUTUBE] VIDEO TITLE: " + title);
+
+
+    // URL - Get video URL from link
+    let entryUrl = titleElement.href;
+    console.log("[YOUTUBE] VIDEO URL: " + entryUrl);
+
+
+    //DURATION - get time watched so far from url's &t= param (if present)
+    let duration = parseInt(getTimeWatchedFromUrl(entryUrl) / 60); //seconds -> min
+
+    if (!duration){ // fallback = get video duration from YouTube player progress bar width    
+      let timeEl = closestAncestor.querySelector("#time-status");
+      let durationText = timeEl.textContent.trim();
+      let progressBarEl = closestAncestor.querySelector('#progress');
+      const watchedPercent = progressBarEl ? parseFloat(progressBarEl.style.width) : null;
+      if (durationText && watchedPercent != null) {
+        const totalSec =  timeStrToSeconds(durationText);
+        duration = parseInt((totalSec * watchedPercent) / 100 / 60); // watched so far in minutes
+      }
+    }
+    console.log("[YOUTUBE] VIDEO DURATION: " + duration + " min");
+
+
+    // Get the content creator's name
+    let author = "Unknown Author";
+    const authorElement = closestAncestor.querySelector("#text-container.style-scope.ytd-channel-name");
+    if (authorElement) {
+      author = authorElement.textContent.trim();
+    }
+    console.log("[YOUTUBE] VIDEO AUTHOR: " + author);
+
+
+    // Send message to the background script with the video duration, title, and tab URL
+      chrome.runtime.sendMessage(
+      {
+        action: "openDreamingSpanish",
+        videoDuration: duration,  // in minutes
+        tabUrl: entryUrl,
+        title: title,
+        author: author,
+      },
+      (response) => {}
+    );
+   }
 
   // Function to create and inject the button
   function createButton() {
@@ -125,6 +305,58 @@ window.onload = function () {
      });
   }
 
+  // Create and inject a button for each video listed on page
+  function createHistPageBtns(histElements){
+    if (!histElements || !histElements.length) return;
+
+    histElements.forEach((histElement, i) => {
+      if (histElement.querySelector(`[id^='${listButtonID}']`)) // prevent duplicates
+        return;
+
+      // Create the button element(s)
+      const button = document.createElement("button");
+      button.id = `${listButtonID}-${i}`; // Assign a unique ID
+
+      // Create the img element
+      const img = document.createElement("img");
+      img.src = chrome.runtime.getURL("dreamingplus.png"); // Reference the image
+      img.alt = "Add to Dreaming Spanish"; // Alt text for accessibility
+
+      // Style the img to be rounded and fit within the button
+      img.style.borderRadius = "50%"; // Makes the image rounded
+      img.style.display = "block";
+      img.style.marginLeft = "8px";
+      img.style.marginRight = "8px";
+      img.style.width = "18px";
+      img.style.height = "18px";
+
+      // style button
+      button.style.background = "transparent"; // Transparent background
+      button.style.border = "none"; // No border
+      button.style.cursor = "pointer"; // Pointer cursor on hover
+      button.style.padding = "0"; // Remove default padding
+      //button.style.marginLeft = "8px"; // Space between buttons
+      button.style.outline = "none"; // Remove focus outline
+
+      // Append the img to the button
+      button.appendChild(img);
+      addHoverEffect(button);
+
+      // insert button
+      if (histElement) {
+        histElement.insertBefore(button, histElement.firstChild); // Insert at the beginning
+      } 
+      else {
+      } 
+
+      // button click listener
+      button.addEventListener("click", async (event) => {
+        grabEntryDataAndSendHist(event.target);
+      });
+    })
+
+  }
+
   // watch for appearance of playback ctrl strip in DOM
   // Function to observe DOM changes and inject the button when playback ctrl strip is available
   function observeDOM() {
@@ -149,7 +381,13 @@ window.onload = function () {
           if (shouldInject(controlsSelector, buttonID)) {
             createButton();
           }
-        }
+
+          // history page - check if there are history elements
+          histElementsArray = document.querySelectorAll(listContainerSelector);
+          if (shouldInjectHist(histElementsArray)) {
+            createHistPageBtns(histElementsArray); 
+          }
+      }
       }
     };
 
@@ -169,6 +407,10 @@ window.onload = function () {
       lastUrl = location.href;
       if (shouldInject(controlsSelector, buttonID)) {
         createButton();
+      }
+      // history page
+      if (shouldInjectHist(histElementsArray)){
+        createHistPageBtns(histElementsArray);
       }
     }
   }, 1000);
