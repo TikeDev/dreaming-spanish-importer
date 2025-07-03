@@ -2,12 +2,14 @@
 
 // when background receives openDreamingSpanish message from content script,
 // open DS tab and pass along info to time adder
+//  or...
+// when background receives DSHTTPRequest message from content script,
+// make HTTP request to DS with info
 
-// open main page
-  chrome.tabs.create({ url: 'openCSVFile.html' }, function(tab) {
-});
- 
-const bearerToken = 'enter bearer token here'
+// get bearer token from Chrome Devtools -> Local Storage -> www.dreamingspanish.com -> token value
+const bearerToken = 'enter bearer token here';  
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 // POST DS loaded data directly to website
 async function postHTTPDSData(jsonObjArray, endPoint){
@@ -85,6 +87,19 @@ async function deleteHTTPDSData(idToDelete){
   
 }
 
+
+// MESSAGE LISTENERS ////////////////////////////
+
+// OPEN IMPORT MANAGER
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === "openImportManager") {
+    const type = request.type;
+
+    // Open import manager page
+    chrome.tabs.create({ url: 'openCSVFile.html' }, function(tab) {
+    }); 
+  }
+});
 
 
 // OPEN DS PAGE SIMULATE USER INPUT
