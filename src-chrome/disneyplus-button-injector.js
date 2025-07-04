@@ -20,7 +20,7 @@ window.onload = function () {
     const container = document.querySelector(containerSel);
     const buttonExists = document.getElementById(buttonId);
 
-    return (container && !buttonExists && location.pathname.startsWith('/play'));
+    return (container && !buttonExists && location.pathname.includes('/play'));
   }
 
   function grabEntryDataAndSend(button){

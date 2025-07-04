@@ -68,35 +68,57 @@ window.onload = function () {
   // get date from the day listed
   function ytWatchedDayToDateString(label, locale = 'en') {
     const now = new Date();
-    const lower = label.toLowerCase().replace(",", "").trim();
 
-    // Relative days mapping per locale
+    // Normalize strings by lowercasing, removing accents, dots, trimming
+    function normalizeKey(str) {
+      return str
+        .toLowerCase()
+        .normalize("NFD")                // decompose accents
+        .replace(/[\u0300-\u036f]/g, "") // remove accents
+        .replace(/\./g, "")              // remove dots
+        .trim();
+    }
+
+    const normalize = str => str.toLowerCase().replace(/[,’‘´`]/g, "'").trim();
+    const lower = normalize(label);
+
+    // mappings
     const relativeDates = {
-      en: { today: 0, yesterday: 1 },
-      es: { hoy: 0, ayer: 1 }
+      en: { "today": 0, "yesterday": 1 },
+      es: { "hoy": 0, "ayer": 1 },
+      fr: { "aujourd'hui": 0, "hier": 1 },
+      pt: { "hoje": 0, "ontem": 1 }
     };
 
     const weekdays = {
       en: ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"],
-      es: ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"]
+      es: ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"],
+      fr: ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"],
+      pt: ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"]
     };
 
     const months = {
-      en: {
-        jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
-        jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11
+      en: { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 },
+      es: { ene: 0, feb: 1, mar: 2, abr: 3, may: 4, jun: 5, jul: 6, ago: 7, sep: 8, oct: 9, nov: 10, dic: 11 },
+      fr: {
+        janvier: 0, fevrier: 1, mars: 2, avril: 3, mai: 4, juin: 5, juillet: 6, aout: 7, septembre: 8, octobre: 9, novembre: 10, decembre: 11,
+        jan: 0, fev: 1, mar: 2, avr: 3, mai: 4, jun: 5, jul: 6, aou: 7, sep: 8, oct: 9, nov: 10, dec: 11
       },
-      es: {
-        ene: 0, feb: 1, mar: 2, abr: 3, may: 4, jun: 5,
-        jul: 6, ago: 7, sep: 8, oct: 9, nov: 10, dic: 11
+      pt: {
+        janeiro: 0, fevereiro: 1, marco: 2, abril: 3, maio: 4, junho: 5, julho: 6, agosto: 7, setembro: 8, outubro: 9, novembro: 10, dezembro: 11,
+        jan: 0, fev: 1, mar: 2, abr: 3, mai: 4, jun: 5, jul: 6, ago: 7, set: 8, out: 9, nov: 10, dez: 11
       }
     };
 
+
+    // Check relative days ("today", "yesterday")
     const rel = relativeDates[locale];
     if (rel && lower in rel) {
-      return new Date(now.getFullYear(), now.getMonth(), now.getDate() - rel[lower]);
+      const daysAgo = rel[lower];
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate() - daysAgo);
     }
 
+    // Check weekdays ("monday", "lunes"..)
     const weekdayList = weekdays[locale];
     const weekdayIndex = weekdayList.indexOf(lower);
     if (weekdayIndex !== -1) {
@@ -106,28 +128,54 @@ window.onload = function () {
       return new Date(now.getFullYear(), now.getMonth(), now.getDate() - daysAgo);
     }
 
-    // Split label into parts
-    const parts = lower.split(" ");
-    if (parts.length < 2) return null;
-
     const localeMonths = months[locale];
+    if (!localeMonths) return null;
 
-    // Handle both "Jun 23" and "23 Jun"
     let day, month, year = now.getFullYear();
 
-    // Case: "23 Jun" or "23 Jun 2018"
-    if (!isNaN(parts[0])) {
-      day = parseInt(parts[0]);
-      month = localeMonths[parts[1].slice(0, 3)];
-      if (parts[2]) year = parseInt(parts[2]);
-    }
+    // formatting based on locale
+    if (locale === 'pt') {
+      // Portuguese: "16 de jun." or "14 de jun. de 2018"
+      // remove 'de' tokens and dots in months
+      const parts = lower.split(' ').filter(p => p !== 'de');
+      if (parts.length >= 2) {
+        day = parseInt(parts[0]);
+        const monthKey = normalizeKey(parts[1]);
+        month = localeMonths[monthKey];
+        if (parts[2]) year = parseInt(parts[2]);
+      }
+    } 
+    else if (locale === 'fr') {
+      // French: "20 juin" or "14 juin 2018"
+      // day + month + optional year
+      const parts = lower.split(' ');
+      if (parts.length >= 2) {
+        day = parseInt(parts[0]);
+        let monthKey = normalizeKey(parts[1]);
+        month = localeMonths[monthKey];
+        if (!month && parts[1].length > 3) {
+          // fallback: try first 3 letters normalized
+          month = localeMonths[normalizeKey(parts[1].slice(0, 3))];
+        }
+        if (parts[2]) year = parseInt(parts[2]);
+      }
+    } 
     else {
-      month = localeMonths[parts[0].slice(0, 3)];
-      day = parseInt(parts[1]);
-      if (parts[2]) year = parseInt(parts[2]);
+      // English, Spanish, or fallback: day month year or month day year
+      const parts = lower.split(" ");
+      if (parts.length < 2) return null;
+      if (!isNaN(parts[0])) {
+        day = parseInt(parts[0]);
+        month = localeMonths[normalizeKey(parts[1].slice(0, 3))];
+        if (parts[2]) year = parseInt(parts[2]);
+      } else {
+        month = localeMonths[normalizeKey(parts[0].slice(0, 3))];
+        day = parseInt(parts[1]);
+        if (parts[2]) year = parseInt(parts[2]);
+      }
     }
 
-    if (day != null && month != null) {
+    if (day != null && month != null && !isNaN(day) && !isNaN(month)) {
       return new Date(year, month, day);
     }
 
@@ -187,7 +235,7 @@ window.onload = function () {
     );
   }
 
-    function grabEntryDataAndSendHist(button){
+  function grabEntryDataAndSendHist(button){
     let closestAncestor = button.closest('#dismissible');
     
     // DATE - walk up the DOM to find the day title
@@ -199,6 +247,7 @@ window.onload = function () {
     let dayWatched = ytWatchedDayToDateString(ytDayWatched, locale.split("_")[0]);
     dayWatched = formatDate(dayWatched);  // YYYY-MM-DD
 
+    console.log("DAY WATCHED: " + dayWatched);
 
     // TITLE - Retrieve the video title
     let title = "Untitled";

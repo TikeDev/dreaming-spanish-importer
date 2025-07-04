@@ -61,7 +61,7 @@ window.onload = function () {
 
     // AUTHOR - Get the content creator's name
     let author = "Unknown Author";
-    const authorElement = document.querySelector('[data-testid="context-item-info-show"]');
+    const authorElement = document.querySelector('[data-testid="context-item-info-show"], [data-testid="context-item-info-artist"], [data-testid="context-item-info-book"]');
     if (authorElement) {
       author = authorElement.textContent;
     }

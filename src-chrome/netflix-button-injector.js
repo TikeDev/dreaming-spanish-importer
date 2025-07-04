@@ -1,7 +1,7 @@
 console.log("[Dreaming Languages Importer] Injecting button...");
 
 window.onload = function () {
-  let controlsSelector = 'button[aria-label="Full screen"]';  // element to ultimately inject button into
+  let controlsSelector = 'button[aria-label="Full screen"], button[aria-label="Pantalla completa"], button[aria-label="Tela inteira"], button[aria-label="Plein écran"]' ;  // element to ultimately inject button into
   let buttonID = "dreaming-spanish-button"; // DS button ID
   //let buttonSelector = `#${buttonID}`;      // DS button selector
 
