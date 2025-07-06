@@ -389,6 +389,7 @@ window.onload = function () {
         img.style.height = "100%";
         img.style.minWidth = "15px";
         img.style.minHeight = "15px";
+        img.style.backgroundColor = "rgba(3, 169, 244, .8)";
 
         // style button
         button.style.background = "transparent"; // Transparent background
