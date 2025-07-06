@@ -6,8 +6,8 @@ window.onload = function () {
   let buttonSelector = `#${buttonID}`;          // DS button selector
 
   // history page
-  let listContainerSelector = "#byline-container";   // element to ultimately inject history button into
-  let listButtonID = "dreaming-spanish-hist-button"; // history page DS button ID
+  let histContainerSelector = "#byline-container";   // element to ultimately inject history button into
+  let histButtonID = "dreaming-spanish-hist-button"; // history page DS button ID
   let histElementsArray = [];
 
 
@@ -48,12 +48,12 @@ window.onload = function () {
 
   // history page - check to see if right URL and if there are still list buttons left to inject
   function shouldInjectHist(elementsArray) {
-    const listButtonsExists = document.querySelector(`[id^='${listButtonID}-${elementsArray.length-1}']`);
+    const histButtonsExists = document.querySelector(`[id^='${histButtonID}-${elementsArray.length-1}']`);
 
     return (
       location.pathname.startsWith('/feed/history')
       && elementsArray 
-      && !listButtonsExists
+      && !histButtonsExists
     )          
   }
 
@@ -359,12 +359,12 @@ window.onload = function () {
     if (!histElements || !histElements.length) return;
 
     histElements.forEach((histElement, i) => {
-      if (histElement.querySelector(`[id^='${listButtonID}']`)) // prevent duplicates
+      if (histElement.querySelector(`[id^='${histButtonID}']`)) // prevent duplicates
         return;
 
       // Create the button element(s)
       const button = document.createElement("button");
-      button.id = `${listButtonID}-${i}`; // Assign a unique ID
+      button.id = `${histButtonID}-${i}`; // Assign a unique ID
 
       // Create the img element
       const img = document.createElement("img");
@@ -432,7 +432,7 @@ window.onload = function () {
           }
 
           // history page - check if there are history elements
-          histElementsArray = document.querySelectorAll(listContainerSelector);
+          histElementsArray = document.querySelectorAll(histContainerSelector);
           if (shouldInjectHist(histElementsArray)) {
             createHistPageBtns(histElementsArray); 
           }
