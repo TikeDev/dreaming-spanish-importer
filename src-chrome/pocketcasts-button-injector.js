@@ -161,14 +161,44 @@ window.onload = function () {
   }
 
   // convert '1 h 3 m' or '39 min' format to minutes
-  function convertTimeToMinutes(timeString) {
+  function convertTimeToMinutes(timeString, locale) {
+    const seconds = {
+      en: "sec",
+      es: "seg",
+      pt: "seg",
+      fr: "sec"
+    };
+
+    const minutes = {
+      en: "min",
+      es: "min",
+      pt: "min",
+      fr: "min"
+    };
+
+    const min = {
+      en: "m",
+      es: "m",
+      pt: "m",
+      fr: "m"
+    };
+
+    const hr = {
+      en: "h",
+      es: "h",
+      pt: "h",
+      fr: "h"
+    };
+
+
     // "2 secs" or "1 sec"
-    if (timeString.includes("sec")){ // under a min
-      return 0;
+    if (timeString.includes(seconds[locale])){ // under a min
+      return parseFloat(timeString) / 60;
     }
 
     // regex to extract hours and minutes
-    let match = timeString.match(/(\d+)\sh\s*(\d+)\sm/);
+    let regex = new RegExp(`(\\d+)\\s*${hr[locale]}\\s*(\\d+)\\s*${min[locale]}`);
+    let match = timeString.match(regex);    
     let totalMinutes;
 
     // "1h 8m" format
@@ -213,7 +243,7 @@ window.onload = function () {
           // check if this is a gray arc (100% watched)
           if (stroke && grayColors.includes(stroke)) {
               hasGrayArc = true;
-              return;
+              return 100;
           }
           
           if (stroke === '#03A9F4') {
@@ -228,25 +258,12 @@ window.onload = function () {
       
       // if gray arc, it's 100% watched
       if (hasGrayArc) {
-          return {
-              watchedLength: 360, // Full circle
-              unwatchedLength: 0,
-              progressPercentage: 100,
-              totalLength: 360,
-              isFullyWatched: true
-          };
+          return 100;
       }
       
       // if only one full solid blue circle, it's 0% watched
       if (solidBlueArcs.length === 1 && !watchedArc) {
-          return {
-              watchedLength: 0,
-              unwatchedLength: 360, // Full circle
-              progressPercentage: 0,
-              totalLength: 360,
-              isNotStarted: true,
-              isFullyWatched: false
-          };
+          return 0;
       }
       
       // we need both arcs for partial progress 
@@ -265,12 +282,12 @@ window.onload = function () {
       return progressPercentage;
   }
 
-  function calcWatchedTime(svgElement, timeLeft){
+  function calcWatchedTime(svgElement, timeLeft, locale){
     let percentWatched = extractWatchProgressFromSVG(svgElement);
-    let minutesLeft = convertTimeToMinutes(timeLeft);
+    let minutesLeft = convertTimeToMinutes(timeLeft, locale);
 
     console.log("WATCHED PERCENTAGE " + percentWatched);
-    if (percentWatched && minutesLeft){
+    if (percentWatched >= 0 && minutesLeft){
       let percentLeft = 100 - percentWatched;
       let totalTime = minutesLeft / (percentLeft / 100);
       let minutesWatched = Math.floor(totalTime - minutesLeft);
@@ -287,7 +304,7 @@ window.onload = function () {
 
     // TITLE - Retrieve the track title
     let title = "Untitled";
-    const titleElement = closestAncestor.querySelector(".sc-4328y0-0.gQZqFX");
+    const titleElement = closestAncestor.querySelector(".sc-4328y0-0.gQZqFX, .sc-4328y0-0.gWtqqk"); // select whether in light or dark mode
     title = "Untitled track"; // Default title if not found
     if (titleElement) {
       // Original title with \n and extra spaces
@@ -316,7 +333,9 @@ window.onload = function () {
     if (durationLeftText){ 
       let playButtonEl = closestAncestor.querySelector('button[aria-label="Play"]');
       let progressCircleEl = playButtonEl.querySelector('svg');
-      duration = calcWatchedTime(progressCircleEl, durationLeftText);
+      let localeEl = document.head.querySelector('meta[property="og:locale"]');
+      let locale = localeEl.content.split("-")[0]; // Ex. "en-US" -> "en"
+      duration = calcWatchedTime(progressCircleEl, durationLeftText, locale);
       console.log("WATCHED: " + duration + " min");
     }
     console.log("[POCKET CASTS] TRACK DURATION: " + duration + " min");
@@ -335,7 +354,7 @@ window.onload = function () {
       chrome.runtime.sendMessage(
       {
         action: "openDreamingSpanish",
-        videoDuration: duration,  // in minutes
+        videoDuration: (duration || 1), // can't submit 0 min, default 1 min
         tabUrl: entryUrl,
         title: title,
         author: author,
@@ -364,10 +383,12 @@ window.onload = function () {
         // Style the img to be rounded and fit within the button
         img.style.borderRadius = "50%"; // Makes the image rounded
         img.style.display = "block";
-        img.style.marginLeft = "8px";
-        img.style.marginRight = "8px";
-        img.style.width = "18px";
-        img.style.height = "18px";
+        img.style.marginLeft = "2px";
+        img.style.marginRight = "2px";
+        img.style.width = "auto";
+        img.style.height = "100%";
+        img.style.minWidth = "15px";
+        img.style.minHeight = "15px";
 
         // style button
         button.style.background = "transparent"; // Transparent background
@@ -376,6 +397,11 @@ window.onload = function () {
         button.style.padding = "0"; // Remove default padding
         //button.style.marginLeft = "8px"; // Space between buttons
         button.style.outline = "none"; // Remove focus outline
+        button.style.marginRight = "0px";
+        button.style.height = "100%";
+        button.style.width = "auto";
+        button.style.position = "relative";
+        button.style.top = "40%";
 
         // Append the img to the button
         button.appendChild(img);
@@ -383,22 +409,42 @@ window.onload = function () {
 
         // insert button
         if (histElement) {
+          let divContainer = document.createElement("div");
+          divContainer.style.minWidth = "25%";
+          divContainer.style.display = "flex";
+          divContainer.style.justifyContent = "flex-end";
+          divContainer.style.width = "auto";
+          divContainer.style.flexGrow = "1";
+          divContainer.style.height = "25px";
+          divContainer.style.marginRight = "10px";
 
-          let insertBeforeEl = histElement.querySelector(".sc-5yufrp-0.sc-7bdjmj-0.ksOhnG.jyMjOb");
-          insertBeforeEl.parentElement.insertBefore(button, insertBeforeEl); // Insert at the beginning
-        button.style.zIndex = "2"; // Keep button clickable between page resizes
+          divContainer.appendChild(button);
+
+          // add button container to podcast title's grid box
+          let insertEl = histElement.querySelector(".sc-vfjfae-0.dxzJkg");
+          let gridBox = insertEl.closest(".sc-vfjfae-0.dxzJkg");
+          insertEl.appendChild(divContainer); // Insert at the end
+          gridBox.style.overflow = "visible"; //prevent clipping
+
+          // when page width < 768px, apply this style to maintain button's vertical alignment 
+          const smallWidthStyle = document.createElement("style");
+          smallWidthStyle.textContent = 
+            `@media (max-width: 768px) {
+              [id^='${histButtonID}'] {
+                top: 3% !important;
+              }
+            }`;
+          document.head.appendChild(smallWidthStyle);
         } 
         else {
         } 
 
         // button click listener
         button.addEventListener("click", async (event) => {
-      event.stopPropagation();
+          event.stopPropagation();
           grabEntryDataAndSendHist(event.target);
         });
-    //  }
     })
-
 
   }
 
