@@ -1,3 +1,7 @@
+// handshake w background.js to make sure script is ready before doing anything
+chrome.runtime.sendMessage({ action: "dsScriptReady" });
+let modalHandled = false;
+
 // Function to simulate user input more thoroughly
 function simulateUserInput(element, value) {
   element.focus();
@@ -27,7 +31,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const author = request.author !== undefined ? request.author : "Unknown Author";
 
     // Create a MutationObserver to watch for the "Add hours outside the platform" button
-    const observer = new MutationObserver((mutations, observerInstance) => {
+    const buttonObserver = new MutationObserver((mutations, buttonObserverInstance) => {
       console.log(
         "Dreaming Spanish Helper: Checking for 'Add hours outside the platform' button..."
       );
@@ -39,7 +43,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
       if (addHoursButton) {
         // Stop observing once the button is found
-        observerInstance.disconnect();
+        buttonObserverInstance.disconnect();
 
         // Simulate a click on the "Add hours outside the platform" button
         addHoursButton.click();
@@ -53,8 +57,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             console.log("Dreaming Spanish Helper: Checking for modal...");
 
             // Adjust the selector based on the actual modal structure
-            const modal = document.querySelector(".modal"); // Replace with the actual modal selector if different
-            if (modal) {
+            const modal = document.querySelector(".modal"); // Replace with the actual modal selector if different         
+            if (modal && !modalHandled) {
+              // know when to disconnect observer
+              modalHandled = true;
+              modalObserverInstance.disconnect();
               console.log("Dreaming Spanish Helper: Modal found!");
 
               // Stop observing once the modal is found
@@ -102,13 +109,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           childList: true,
           subtree: true,
         });
+        // auto-disconnect if no modal after 5 seconds
+        setTimeout(() => modalObserver.disconnect(), 5000);
       }
     });
 
     // Start observing the DOM for the "Add hours outside the platform" button
-    observer.observe(document.body, {
+    buttonObserver.observe(document.body, {
       childList: true,
       subtree: true,
     });
+    // auto-disconnect if no add hour button after 5 seconds
+    setTimeout(() => buttonObserver.disconnect(), 5000);
   }
 });

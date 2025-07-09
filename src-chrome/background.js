@@ -90,50 +90,7 @@ async function deleteHTTPDSData(idToDelete){
 
 // MESSAGE LISTENERS ////////////////////////////
 
-// OPEN IMPORT MANAGER
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "openImportManager") {
-    const type = request.type;
 
-    // Open import manager page
-    chrome.tabs.create({ url: 'openCSVFile.html' }, function(tab) {
-    }); 
-  }
-});
-
-
-// OPEN DS PAGE SIMULATE USER INPUT
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "openDreamingSpanish") {
-    const duration = request.videoDuration;
-    const tabUrl = request.tabUrl;
-    const title = request.title;
-    const author = request.author;
-
-    // Open the dreamingspanish.com/progress/time-outside page
-    chrome.tabs.create(
-      { url: "https://dreamingspanish.com/progress/time-outside" },
-      (tab) => {
-        // When the new tab is fully loaded, send the video duration to the content script
-        chrome.tabs.onUpdated.addListener(function listener(tabId, info) {
-          if (tabId === tab.id && info.status === "complete") {
-            chrome.tabs.sendMessage(tabId, {
-              action: "autofillForm",
-              videoDuration: duration,
-              tabUrl: tabUrl,
-              title: title,
-              author: author
-            });
-            chrome.tabs.onUpdated.removeListener(listener);
-          }
-        });
-      }
-    );
-  }
-});
-
-
-// LISTENERS //////////////
 // Listen for HTTP request message from content script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "DSHTTPRequest") {
@@ -158,3 +115,52 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 
 
+
+// OPEN IMPORT MANAGER
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === "openImportManager") {
+    const type = request.type;
+
+    // Open import manager page
+    chrome.tabs.create({ url: 'openCSVFile.html' }, function(tab) {
+    }); 
+  }
+});
+
+// OPEN DS PAGE SIMULATE USER INPUT (to be replaced w HTTP request)
+let pendingTabInfo = null;
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === "openDreamingSpanish") {
+    const tabInfo = {
+      duration: request.videoDuration,
+      tabUrl: request.tabUrl,
+      title: request.title,
+      author: request.author,
+    };
+
+    chrome.tabs.create(
+      { url: "https://dreamingspanish.com/progress/time-outside" },
+      (tab) => {
+        // Store tab info to use when content script says it's ready
+        pendingTabInfo = { tabId: tab.id, ...tabInfo };
+      }
+    );
+  }
+
+  // handshake with ds-time-adder.js to make sure it's ready before doing anything
+  if (request.action === "dsScriptReady" && sender.tab && pendingTabInfo) {
+    if (sender.tab.id === pendingTabInfo.tabId) {
+      chrome.tabs.sendMessage(sender.tab.id, {
+        action: "autofillForm",
+        videoDuration: pendingTabInfo.duration,
+        tabUrl: pendingTabInfo.tabUrl,
+        title: pendingTabInfo.title,
+        author: pendingTabInfo.author,
+      });
+
+      // clear after sending
+      pendingTabInfo = null;
+    }
+  }
+});
