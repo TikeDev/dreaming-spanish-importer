@@ -9,10 +9,12 @@ window.onload = function () {
   function addHoverEffect(button){
     // Optional: Add hover effect (e.g., slight opacity change)
     button.onmouseover = () => {
-      button.style.opacity = "0.8";
+      button.style.opacity = "1";
+      button.style.transform = "scale(1.04)";
     };
     button.onmouseout = () => {
-      button.style.opacity = "1";
+      button.style.opacity = "0.8";
+      button.style.transform = "scale(1.0)";
     };
   }
 
@@ -114,6 +116,8 @@ window.onload = function () {
     button.style.padding = "0"; // Remove default padding
     button.style.marginLeft = "8px"; // Space between buttons
     button.style.outline = "none"; // Remove focus outline
+    button.style.opacity = ".8";
+    button.style.transition = "transform 100ms";
 
     // Append the img to the button
     button.appendChild(img);

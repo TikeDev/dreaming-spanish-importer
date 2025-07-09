@@ -4,6 +4,7 @@ window.onload = function () {
   let controlsSelector = ".ytp-right-controls"; // element to ultimately inject button into
   let buttonID = "dreaming-spanish-np-button";  // DS button ID
   let buttonSelector = `#${buttonID}`;          // DS button selector
+  let adShowingSelector = ".ad-showing, .ad-interrupting";        // when ad is playing
 
   // history page
   let histContainerSelector = "#byline-container";   // element to ultimately inject history button into
@@ -38,12 +39,12 @@ window.onload = function () {
     return timeWatched;
   }
 
-  // check if right URL and ready to inject button to relevant container element
+  // check if correct URL, no ads playing, and ready to inject button to relevant container element
   function shouldInject(containerSel, buttonId) {
     const container = document.querySelector(containerSel);
     const buttonExists = document.getElementById(buttonId);
 
-    return (container && !buttonExists && location.pathname.startsWith('/watch'));
+    return (location.pathname.startsWith('/watch') && container && !buttonExists);
   }
 
   // history page - check to see if right URL and if there are still list buttons left to inject
@@ -328,7 +329,7 @@ window.onload = function () {
     img.style.borderRadius = "50%"; // Makes the image rounded
     img.style.display = "block";
     img.style.marginLeft = "10px";
-    img.style.marginRight = "10px";
+    img.style.marginRight = "14px";
     img.style.width = "24px";
     img.style.height = "24px";
 
@@ -339,10 +340,16 @@ window.onload = function () {
     button.style.padding = "0"; // Remove default padding
     //button.style.marginLeft = "8px"; // Space between buttons
     button.style.outline = "none"; // Remove focus outline
+    button.style.opacity = "1";
+    button.style.transition = ".05s cubic-bezier(0,0,.2,1)";
 
     // Append img to the button
     button.appendChild(img);
     addHoverEffect(button);
+
+    // hide button if ad is playing
+    const adShowing = document.querySelector(adShowingSelector);        
+    button.style.display = adShowing ? "none" : "block";
 
     // Append the button to the controls strip
     controls.style.display = "flex";
@@ -426,6 +433,14 @@ window.onload = function () {
       // for each mutation observed, if there are ctrls but no DS button, create one 
       for (let mutation of mutationsList) { 
         if (mutation.type === "childList") {
+          
+          // hide button if ad is playing
+          const button = document.getElementById(buttonID);
+          if (button){
+            const adShowing = document.querySelector(adShowingSelector);        
+            button.style.display = adShowing ? "none" : "block";
+          }
+
           // check if good to inject
           if (shouldInject(controlsSelector, buttonID)) {
             createButton();
