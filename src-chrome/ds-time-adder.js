@@ -29,6 +29,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const tabUrl = request.tabUrl;
     const title = request.title;
     const author = request.author !== undefined ? request.author : "Unknown Author";
+    const extraData = (request.extraData || "");
 
     // Create a MutationObserver to watch for the "Add hours outside the platform" button
     const buttonObserver = new MutationObserver((mutations, buttonObserverInstance) => {
@@ -83,7 +84,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
               
               if (descriptionInput) {
                 // Title first to make it show in preview table
-                simulateUserInput(descriptionInput, `${title} || ${author} \n${tabUrl}`);
+                let message = `${title} || ${author} \n${tabUrl}`;
+                if (extraData){
+                  message = extraData + message;
+                }
+                simulateUserInput(descriptionInput, message);
               } else {
                 console.error("Dreaming Spanish Helper: 'description' input field not found.");
                 return; // Exit if the input field isn't found

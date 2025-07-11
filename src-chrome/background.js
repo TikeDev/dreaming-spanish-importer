@@ -137,6 +137,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       tabUrl: request.tabUrl,
       title: request.title,
       author: request.author,
+      extraData: request?.extraData
     };
 
     chrome.tabs.create(
@@ -157,6 +158,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         tabUrl: pendingTabInfo.tabUrl,
         title: pendingTabInfo.title,
         author: pendingTabInfo.author,
+        extraData: pendingTabInfo?.extraData
       });
 
       // clear after sending

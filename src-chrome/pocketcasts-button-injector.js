@@ -58,15 +58,15 @@ window.onload = function () {
     if (titleElement) {
       title = titleElement.textContent;
     }
-    if (document.querySelector(".chapter")){  // Note: if episode has sections, the title is displayed as the current section :(
-    
+    if (document.querySelector(".chapter")){  // Note: if the episode has sections, the player displays the title as the current section :(    
       let timeScrubber = document.querySelector(".knob");
       let timeScrubberPos = parseFloat(window.getComputedStyle(timeScrubber)?.left);
       let chapterDotElements = document.querySelectorAll(".dot");
       let firstChapterLimit = parseFloat(window.getComputedStyle(chapterDotElements[1])?.left);
 
       if (timeScrubberPos > firstChapterLimit){
-        title = "Unknown Episode, chapter was: " + title;  
+        extraData = "*UNKNOWN EP (see link)*";  
+        title = "";
       }
     }
     console.log("[POCKET CASTS] TRACK TITLE: " + title);
@@ -94,6 +94,7 @@ window.onload = function () {
         tabUrl: tabUrl,
         title: title,
         author: author,
+        extraData: extraData
       },
       (response) => {}
     ); 
@@ -152,8 +153,6 @@ window.onload = function () {
 // HISTORY PAGE BUTTONS //////////
   // history page - check to see if right URL and if there are elements to inject buttons into
   function shouldInjectHist(elementsArray) {
-    //const histButtonsExists = document.querySelector(`[id='${histButtonID}-${elementsArray.length-1}']`);
-
     return (
       location.pathname.startsWith('/history')
       && elementsArray       
@@ -297,14 +296,20 @@ window.onload = function () {
   }
 
   function grabEntryDataAndSendHist(button){
+    //  current columns appearance:
+    //    0            1                   2          3          4       5    6  
+    // |image|title/podcast/(DS btn)|date published|time left|btn strip|???|play btn|
+
     let closestAncestor = button.closest('div[data-index]'); // list container
-    
+    let spanEls = closestAncestor.querySelectorAll("span");
+    let linkEls = closestAncestor.querySelectorAll('[href^="/podcasts/"]');
+
     // DATE - unfortunately the date displayed is the date of publication :(
 
 
     // TITLE - Retrieve the track title
     let title = "Untitled";
-    const titleElement = closestAncestor.querySelector(".sc-4328y0-0.gQZqFX, .sc-4328y0-0.gWtqqk"); // select whether in light or dark mode
+    let titleElement = linkEls[0];
     title = "Untitled track"; // Default title if not found
     if (titleElement) {
       // Original title with \n and extra spaces
@@ -318,7 +323,7 @@ window.onload = function () {
 
     // URL - Get track URL from link
     let entryUrl = location.href; // tab url as default
-    let entryUrlEl = closestAncestor.querySelector("a.sc-4328y0-1.hVZBzB");
+    let entryUrlEl = titleElement;
     if (entryUrlEl){
       entryUrl = entryUrlEl.href;
     }    
@@ -328,7 +333,7 @@ window.onload = function () {
     // DURATION - figure out time watched so far by using 
     // time left to watch and the play button's progress circle
     let duration;
-    let durationLeftText = closestAncestor.querySelector(".duration-text").textContent.trim() //Ex. "1 h 9 m" or "39 min"
+    let durationLeftText = spanEls[4].textContent.trim(); //Ex. "1 h 9 m" or "39 min"
 
     if (durationLeftText){ 
       let playButtonEl = closestAncestor.querySelector('button[aria-label="Play"]');
@@ -338,12 +343,12 @@ window.onload = function () {
       duration = calcWatchedTime(progressCircleEl, durationLeftText, locale);
       console.log("WATCHED: " + duration + " min");
     }
-    console.log("[POCKET CASTS] TRACK DURATION: " + duration + " min");
+    console.log("[POCKET CASTS] TRACK DURATION: " + (duration || "no listed ") + " min");
 
 
-    // Get the content creator's name
+    // AUTHOR - Get the content creator's name
     let author = "Unknown Author";
-    const authorElement = closestAncestor.querySelector(".sc-4328y0-1.hVZBzB");
+    const authorElement = linkEls[1];
     if (authorElement) {
       author = authorElement.textContent.trim();
     }
@@ -357,7 +362,7 @@ window.onload = function () {
         videoDuration: (duration || 1), // can't submit 0 min, default 1 min
         tabUrl: entryUrl,
         title: title,
-        author: author,
+        author: author
       },
       (response) => {}
     );
@@ -372,44 +377,44 @@ window.onload = function () {
         return;
         
       const i = histElement.getAttribute('data-index');
-        const button = document.createElement("button");
-        button.id = `${histButtonID}-${i}`; // Assign a unique ID
+      const button = document.createElement("button");
+      button.id = `${histButtonID}-${i}`; // Assign a unique ID
 
-        // Create the img element
-        const img = document.createElement("img");
-        img.src = chrome.runtime.getURL("dreamingplus.png"); // Reference the image
-        img.alt = "Add to Dreaming Spanish"; // Alt text for accessibility
+      // Create the img element
+      const img = document.createElement("img");
+      img.src = chrome.runtime.getURL("dreamingplus.png"); // Reference the image
+      img.alt = "Add to Dreaming Spanish"; // Alt text for accessibility
 
-        // Style the img to be rounded and fit within the button
-        img.style.borderRadius = "50%"; // Makes the image rounded
-        img.style.display = "block";
-        img.style.marginLeft = "2px";
-        img.style.marginRight = "2px";
-        img.style.width = "auto";
-        img.style.height = "100%";
-        img.style.minWidth = "15px";
-        img.style.minHeight = "15px";
-        img.style.backgroundColor = "rgba(3, 169, 244, .8)";
+      // Style the img to be rounded and fit within the button
+      img.style.borderRadius = "50%"; // Makes the image rounded
+      img.style.display = "block";
+      img.style.marginLeft = "2px";
+      img.style.marginRight = "2px";
+      img.style.width = "auto";
+      img.style.height = "100%";
+      img.style.minWidth = "15px";
+      img.style.minHeight = "15px";
+      img.style.backgroundColor = "rgba(3, 169, 244, .8)";
 
-        // style button
-        button.style.background = "transparent"; // Transparent background
-        button.style.border = "none"; // No border
-        button.style.cursor = "pointer"; // Pointer cursor on hover
-        button.style.padding = "0"; // Remove default padding
-        //button.style.marginLeft = "8px"; // Space between buttons
-        button.style.outline = "none"; // Remove focus outline
-        button.style.marginRight = "0px";
-        button.style.height = "100%";
-        button.style.width = "auto";
-        button.style.position = "relative";
-        button.style.top = "40%";
+      // style button
+      button.style.background = "transparent"; // Transparent background
+      button.style.border = "none"; // No border
+      button.style.cursor = "pointer"; // Pointer cursor on hover
+      button.style.padding = "0"; // Remove default padding
+      //button.style.marginLeft = "8px"; // Space between buttons
+      button.style.outline = "none"; // Remove focus outline
+      button.style.marginRight = "0px";
+      button.style.height = "100%";
+      button.style.width = "auto";
+      button.style.position = "relative";
+      button.style.top = "40%";
 
-        // Append the img to the button
-        button.appendChild(img);
-        addHoverEffect(button);
+      // Append the img to the button
+      button.appendChild(img);
+      addHoverEffect(button);
 
-        // insert button
-        if (histElement) {
+      // insert button
+      if (histElement) {
           let divContainer = document.createElement("div");
           divContainer.style.minWidth = "25%";
           divContainer.style.display = "flex";
@@ -422,10 +427,11 @@ window.onload = function () {
           divContainer.appendChild(button);
 
           // add button container to podcast title's grid box
-          let insertEl = histElement.querySelector(".sc-vfjfae-0.dxzJkg");
-          let gridBox = insertEl.closest(".sc-vfjfae-0.dxzJkg");
-          insertEl.appendChild(divContainer); // Insert at the end
-          gridBox.style.overflow = "visible"; //prevent clipping
+          let row = histElement.childNodes[0];
+          let podcastTitleGridBox = row.childNodes[1];
+          let insertEl = podcastTitleGridBox.childNodes[0];
+          insertEl.appendChild(divContainer);  // insert at the end
+          insertEl.style.overflow = "visible"; // prevent clipping of button
 
           // when page width < 768px, apply this style to maintain button's vertical alignment 
           const smallWidthStyle = document.createElement("style");
@@ -436,15 +442,15 @@ window.onload = function () {
               }
             }`;
           document.head.appendChild(smallWidthStyle);
-        } 
-        else {
-        } 
+      } 
+      else {
+      } 
 
-        // button click listener
-        button.addEventListener("click", async (event) => {
+      // button click listener
+      button.addEventListener("click", async (event) => {
           event.stopPropagation();
           grabEntryDataAndSendHist(event.target);
-        });
+      });
     })
 
   }

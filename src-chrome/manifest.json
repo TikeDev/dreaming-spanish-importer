@@ -25,7 +25,8 @@
         "https://open.spotify.com/*",
         "https://spotify.com/*"
       ],
-      "js": ["spotify-button-injector.js"]
+      "js": ["spotify-button-injector.js"],
+      "css": [ "styles-spotify.css" ]
     },
     {
       "matches": [
@@ -60,7 +61,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["add_icon.jpeg","dreamingplus.png"],
+      "resources": ["dreamingplus*.png"],
       "matches": [
         "https://www.youtube.com/*",
         "https://www.open.spotify.com/*",
