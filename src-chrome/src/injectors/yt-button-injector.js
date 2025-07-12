@@ -322,7 +322,7 @@ window.onload = function () {
 
     // Create the img element
     const img = document.createElement("img");
-    img.src = chrome.runtime.getURL("dreamingplus.png"); // Reference the image
+    img.src = chrome.runtime.getURL("images/dreamingplus.png"); // Reference the image
     img.alt = "Add to Dreaming Spanish"; // Alt text for accessibility
 
     // Style the img to be rounded and fit within the button
@@ -375,7 +375,7 @@ window.onload = function () {
 
       // Create the img element
       const img = document.createElement("img");
-      img.src = chrome.runtime.getURL("dreamingplus.png"); // Reference the image
+      img.src = chrome.runtime.getURL("images/dreamingplus.png"); // Reference the image
       img.alt = "Add to Dreaming Spanish"; // Alt text for accessibility
 
       // Style the img to be rounded and fit within the button

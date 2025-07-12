@@ -82,7 +82,7 @@ window.onload = function () {
 
       // Create the img element
       const img = document.createElement("img");
-      img.src = chrome.runtime.getURL("dreamingplus.png"); // Reference the image
+      img.src = chrome.runtime.getURL("images/dreamingplus.png"); // Reference the image
       img.alt = "Add to Dreaming Spanish"; // Alt text for accessibility
 
       // Style the img to be rounded and fit within the button
@@ -109,7 +109,7 @@ window.onload = function () {
       if (markedFinishedEl.length == 2){
         isMarkedFinished = markedFinishedEl[1].textContent.includes("Finished");
         if (isMarkedFinished){
-          img.src = chrome.runtime.getURL("dreamingplus-warn.png"); // Reference the image
+          img.src = chrome.runtime.getURL("images/dreamingplus-warn.png"); // Reference the image
           img.style.opacity = ".5";
           
           // add warning tooltip
@@ -240,7 +240,7 @@ window.onload = function () {
       }
       else { // :( no duration listed (prob marked as "finished")
         duration = null;
-        extraData = "*NO DURATION SUBMITTED*\n";
+        extraData = "*⚠️ NO DURATION SUBMITTED*\n";
       }
     }
     console.log("[SPOTIFY] VIDEO DURATION: " + (duration || "no listed ") + " min");
@@ -341,7 +341,7 @@ window.onload = function () {
 
     // Create the img element
     const img = document.createElement("img");
-    img.src = chrome.runtime.getURL("dreamingplus.png"); // Reference the image
+    img.src = chrome.runtime.getURL("images/dreamingplus.png"); // Reference the image
     img.alt = "Add to Dreaming Spanish"; // Alt text for accessibility
 
     // Style the img to be rounded and fit within the button

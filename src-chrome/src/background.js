@@ -7,29 +7,24 @@
 // make HTTP request to DS with info
 
 // get bearer token from Chrome Devtools -> Local Storage -> www.dreamingspanish.com -> token value
-const bearerToken = 'enter bearer token here';  
+const bearerToken = '';  // <-- ENTER BEARER TOKEN HERE 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+// import 
+importScripts('httpQueueManager.js');
 
 
 // POST DS loaded data directly to website
 async function postHTTPDSData(jsonObjArray, endPoint){
   const apiUrl = 'https://www.dreamingspanish.com/.netlify/functions/' + endPoint;
-
-  jsonObjArray.forEach((item) => {
-    fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + bearerToken
-      },
-      body: JSON.stringify(item)
-    })
-      .then((response) => response.json())
-      .then((data) => {})//console.log('Success:', data))
-      .catch((error) => console.error('Error:', error));
-  });
   
+  if (!bearerToken){
+    console.error("No Bearer Token set!");
+  }
+
+  addToQueue(jsonObjArray, apiUrl, bearerToken);  
 }
+
 
 // GET DS history directly from website
 async function getHTTPDSData(endPoint){
@@ -58,8 +53,9 @@ async function getHTTPDSData(endPoint){
   }
 }
 
+
 // DELETE DS entry directly from website
-async function deleteHTTPDSData(idToDelete){
+async function deleteHTTPDSData(idsToDelete){
   const apiUrl = 'https://www.dreamingspanish.com/.netlify/functions/externalTime';
 
   try {
@@ -69,15 +65,17 @@ async function deleteHTTPDSData(idToDelete){
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + bearerToken
       },
-      body: JSON.stringify(idToDelete)
+      body: JSON.stringify(idsToDelete)
     });
 
+    const responseText = await response.text(); // Read response body as text
+
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP ${response.status}: ${responseText}`);
     }
 
-    const data = await response.json();
-    console.log('Success:', data);
+    console.log('[HTTP Queue Manager] ✅ SENT!', item);
+    console.log('[HTTP Queue Manager] 📬 Response:', responseText);
     return true;
   } 
   catch (error) {
@@ -122,7 +120,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const type = request.type;
 
     // Open import manager page
-    chrome.tabs.create({ url: 'openCSVFile.html' }, function(tab) {
+    chrome.tabs.create({ url: 'src/openCSVFile.html' }, function(tab) {
     }); 
   }
 });

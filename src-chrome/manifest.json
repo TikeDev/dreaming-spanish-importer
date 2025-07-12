@@ -4,19 +4,22 @@
   "version": "1.0.0",
   "description": "Automatically add watch/listening history to Dreaming Spanish from a file, Youtube, Spotify, Pocket Casts, Disney Plus, or Netflix.",
   "action": {
-    "default_popup": "popup.html",
-    "default_icon": "dreamingplus-black-bgwhite.png",
+    "default_popup": "src/popup.html",
+    "default_icon": "images/dreamingplus-black-bgwhite.png",
     "default_title": "Dreaming Spanish Importer"
   },
+  "permissions": [
+    "storage"
+  ],  
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "src/background.js"
   },
   "content_scripts": [
     {
       "matches": [
         "https://www.youtube.com/*" 
         ],        
-      "js": ["yt-button-injector.js"]
+      "js": ["src/injectors/yt-button-injector.js"]
     },
     {
       "matches": [
@@ -25,8 +28,8 @@
         "https://open.spotify.com/*",
         "https://spotify.com/*"
       ],
-      "js": ["spotify-button-injector.js"],
-      "css": [ "styles-spotify.css" ]
+      "js": ["src/injectors/spotify-button-injector.js"],
+      "css": [ "src/styles/spotify.css" ]
     },
     {
       "matches": [
@@ -35,33 +38,33 @@
         "https://play.pocketcasts.com/*",
         "https://pocketcasts.com/*"
       ],
-      "js": ["pocketcasts-button-injector.js"]
+      "js": ["src/injectors/pocketcasts-button-injector.js"]
     },    
     {
       "matches": [
         "https://www.disneyplus.com/*",
         "https://disneyplus.com/*"
       ],
-      "js": ["disneyplus-button-injector.js"]
+      "js": ["src/injectors/disneyplus-button-injector.js"]
     },    
     {
       "matches": [
         "https://www.netflix.com/*",
         "https://netflix.com/*"
       ],
-      "js": ["netflix-button-injector.js"]
+      "js": ["src/injectors/netflix-button-injector.js"]
     },    
     {
       "matches": [
         "https://www.dreamingspanish.com/*",
         "https://dreamingspanish.com/*"
       ],
-      "js": ["ds-time-adder.js"]
+      "js": ["src/ds-time-adder.js"]
     }  
   ],
   "web_accessible_resources": [
     {
-      "resources": ["dreamingplus*.png"],
+      "resources": ["images/dreamingplus*.png"],
       "matches": [
         "https://www.youtube.com/*",
         "https://www.open.spotify.com/*",

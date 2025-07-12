@@ -3,9 +3,11 @@
 }
 
 #file_input{
-    float: left;
     margin-top: 10px;
     margin-bottom: 10px;
+}
+#file_open_area #load_file{
+    float: left;
 }
 
 #file_name_p{

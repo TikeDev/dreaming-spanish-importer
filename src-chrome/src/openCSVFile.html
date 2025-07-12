@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="DataTables/datatables.css" rel="stylesheet">
-    <link href="styles.css" rel="stylesheet">
+    <link href="style/styles.css" rel="stylesheet">
     <title>Dreaming Spanish File Importer</title>
   </head>
   <body>
       <h1>Choose CSV File to Import...</h1>  
       <div id="file_open_area">
+        <label id="file_input_label" for="file_input">Choose a .csv or .json file:</label><br>
+        <input id="file_input" type="file" name="file_input" accept=".csv, .json" style="display: none"/>
         <button id="file_input">Open File</button>
-        <p id="file_name_p">File Name: <span id="file_name"></span></p>
       </div><br>
       <button id="file_load">Load File</button>
       <button id="file_import">Import to DS</button><br><br>

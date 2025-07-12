@@ -13,13 +13,23 @@ const fileExportPOSTBtn = document.getElementById('file_export_POST');
 const getExternalTimeGETBtn = document.getElementById('external_time_GET');
 const getDSOnlyHistGETBtn = document.getElementById('DS_only_hist_GET');
 
+const fileInputBtnSelector = 'file_input';
+const fileNameDsplySelector = 'file_name';
+const fileLoadBtnSelector = 'file_load';
+const fileImportBtnSelector = 'file_import';
+const fileExportBtnSelector = 'file_export';
+const fileExportPOSTBtnSelector = 'file_export_POST';
+const getExternalTimeGETBtnSelector = 'external_time_GET';
+const getDSOnlyHistGETBtnSelector = 'DS_only_hist_GET';
+
 
 const pickerOpts = {
   types: [
     {
-      description: "CSV",
+      description: "open .csv or .json file",
       accept: {
         "text/csv": [".csv"],
+        "application/json": [".json"]
       },
     },
   ],
@@ -134,14 +144,14 @@ document.querySelectorAll('#min, #max').forEach((el) => {
 
 //FUNCTIONS///////////////////////////////////////////
 // file open and update filename display
-async function openCSVFile(pickerOpts) {
+async function openImportFile(pickerOpts) {
   let [fileHandle] = await window.showOpenFilePicker(pickerOpts);
   if (fileHandle.name.split(".")[1] != "csv"){
     alert("Please open a .csv file!");
     return
   }
   csvFileData = await fileHandle.getFile();
-  fileNameDsply.innerText = csvFileData.name;// + "# of entries";
+  //fileNameDsply.innerText = csvFileData.name;// + "# of entries";
 }
 
 // Open file picker and return file text
@@ -321,8 +331,17 @@ async function sendHTTPRequestToDS(requestType, endPoint, jsonDSData = []){
 //BUTTON LISTENERS///////////////////////////////////////////
 // File input button
 fileInputBtn.addEventListener('click', function(event) {
-  openCSVFile(pickerOpts);
+  openImportFile(pickerOpts);
   //fileNameDsply.disabled = false;    
+});
+
+// File load button, display info
+fileLoadBtn.addEventListener('click', function(event) {
+  if (fileNameDsply.textContent && csvFileData) {
+    extractCSVFileText(csvFileData);
+  } 
+  else {
+  }
 });
 
 // File load button, display info
@@ -344,13 +363,31 @@ fileExportPOSTBtn.addEventListener('click', function(event) {
 // from DS = { date:, description:, timeSeconds:, type:}
   var tempJson = [
     {
-        date: "2025-06-05",
+        date: "2025-07-07",
         description: "Learn Spanish and Go--Un Vistazo al 2024 - A Glance at 2024",
         timeSeconds: 480,
         type: "watching"
     },
     {
-        date: "2025-06-04",
+        date: "2025-07-06",
+        description: "Learn Spanish and Go--Un Vistazo al 2024 - A Glance at 2024",
+        timeSeconds: 360,
+        type: "listening"
+    },
+    {
+        date: "2025-07-07",
+        description: "Learn Spanish and Go--Un Vistazo al 2024 - A Glance at 2024",
+        timeSeconds: 480,
+        type: "watching"
+    },
+    {
+        date: "2025-07-06",
+        description: "Learn Spanish and Go--Un Vistazo al 2024 - A Glance at 2024",
+        timeSeconds: 360,
+        type: "listening"
+    },
+    {
+        date: "2025-07-06",
         description: "Learn Spanish and Go--Un Vistazo al 2024 - A Glance at 2024",
         timeSeconds: 360,
         type: "listening"
