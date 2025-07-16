@@ -112,8 +112,10 @@ window.onload = function () {
       let markedFinishedEl = trackListElement.querySelectorAll('p[data-encore-id="text"]');
       let isMarkedFinished = false;
 
-      if (markedFinishedEl.length == 2){
-        isMarkedFinished = markedFinishedEl[1].textContent.includes("Finished");
+      if (markedFinishedEl.length <= 2){
+        markedFinishedEl.forEach((el) => {
+          isMarkedFinished = (el.textContent.includes("Finished") || isMarkedFinished);
+        })
         if (isMarkedFinished){
           img.src = chrome.runtime.getURL("images/dreamingplus-warn.png"); // Reference the image
           img.style.opacity = ".5";
