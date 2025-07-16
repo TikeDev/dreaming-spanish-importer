@@ -287,7 +287,7 @@ window.onload = function () {
     button.blur(); // Remove focus to prevent spacebar re-trigger
 
     //DURATION - Get listened to so far duration from Spotify player
-    const timer = document.querySelector('[data-testid="playback-duration"]');
+    const timer = document.querySelector('[data-testid="playback-position"]');
     if (!timer) {
       return;
     }
