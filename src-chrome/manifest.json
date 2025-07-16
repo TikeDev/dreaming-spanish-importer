@@ -4,7 +4,6 @@
   "version": "1.0.0",
   "description": "Automatically add watch/listening history to Dreaming Spanish from a file, Youtube, Spotify, Pocket Casts, Disney Plus, or Netflix.",
   "action": {
-    "default_popup": "src/popup.html",
     "default_icon": "images/dreamingplus-black-bgwhite.png",
     "default_title": "Dreaming Spanish Importer"
   },
