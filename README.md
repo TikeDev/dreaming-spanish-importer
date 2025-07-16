@@ -1,10 +1,12 @@
 ## What is this?
 
-This is the source code for a Chrome extension (*Firefox extension to be updated soon!*) that adds a specialized button to YouTube, Spotify, Pocket Casts, Disney Plus, and Netflix for adding the video or podcast time to your Dreaming Spanish tracker.
+This is the source code for a Chrome extension (*Firefox extension to be updated soon!*) that seamlessly adds specialized buttons to YouTube, Spotify, Pocket Casts, Disney Plus, and Netflix for adding the video or podcast time to your Dreaming Spanish tracker!
 
 ## How do I use this?
 
-You can download this repository and add the sourcecode to Chrome manually.
+For now you can download this repository and install the extension to Chrome manually. 
+
+In the future I hope to have this available on at least the Chrome webstore.
 
 
 ## Installation
