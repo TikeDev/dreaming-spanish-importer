@@ -29,7 +29,7 @@ You can download this repository and add the sourcecode to Chrome manually.
 
 ## How it Works
 Open the video page or play a track on a supported web player and an <img width="24" alt="Ñ Dreaming Spanish add button" src="https://github.com/user-attachments/assets/4b63cd4f-3505-48f6-bae6-41062e0e77b0"/>
- button appears in the controls. When you click it, it captures the video/track info and the current timestamp and automatically submits it to your Dreaming Spanish "outside hours."
+ button appears in the controls. When you click it, it captures the video/track info and the current timestamp and quickly opens a tab to automatically submit the info to your Dreaming Spanish "outside hours."
 
 See **[demos](https://github.com/TikeDev/dreaming-spanish-importer/tree/main/demos)** for more screenshots!
 
@@ -51,6 +51,7 @@ See **[demos](https://github.com/TikeDev/dreaming-spanish-importer/tree/main/dem
 ## Known Bugs/Issues
 * Youtube - submitting from the Youtube watch history page doesn't capture the date it was watched. This is due to a limitation of the DS page not accepting automated user input on its date picker. At some point I'll switch the submit method with plain HTTP requests, which will fix this bug.
 * Spotify - submitting a "Marked as Finished" (with a checkmark) track from a podcast or audiobook page does not capture the duration as it's not displayed in this case. Buttons for such tracks will appear as dimmed orange <img width="24" alt="Ñ Dreaming Spanish add button with warning" src="https://github.com/TikeDev/dreaming-spanish-importer/blob/main/src-chrome/images/dreamingplus-warn.png?raw=true"/> with a tooltip and a warning will be added to the DS entry's description for easy updating later.
+* Firefox - even though there's a Firefox folder, most of the above features only apply to the Chrome version. Once I get the Chrome version to a known stable state I'll be able to create a Firefox version in no time.
 
 
 ## FAQ
@@ -59,7 +60,7 @@ See **[demos](https://github.com/TikeDev/dreaming-spanish-importer/tree/main/dem
 
 Great question - I have a lot more features that I'm working on (file import, display, export etc) so I haven't submitted the extension to the store yet. Stay tuned!
 
-> Why don't you have a Firefox version??
+> Why don't you have an **updated** Firefox version??
 
 I'm currently building and testing this for Chrome and I want to get it to a known stable state before I create a Firefox version. Fortunately it shouldn't take too long once that happens. Again, stay tuned!
 
