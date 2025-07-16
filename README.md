@@ -59,6 +59,10 @@ See **[demos](https://github.com/TikeDev/dreaming-spanish-importer/tree/main/dem
 
 Great question - I have a lot more features that I'm working on (file import, display, export etc) so I haven't submitted the extension to the store yet. Stay tuned!
 
+> Why don't you have a Firefox version??
+
+I'm currently building and testing this for Chrome and I want to get it to a known stable state before I create a Firefox version. Fortunately it shouldn't take too long once that happens. Again, stay tuned!
+
 > How do I know this is safe and you aren't mining bitcoin on my computer?
 
 Another great question! This is open source, so you can simply look at the files within this repository before you load them onto your browser. If you are not technically savvy,
