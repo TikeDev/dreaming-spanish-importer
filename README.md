@@ -9,29 +9,34 @@ You can download this repository and add the sourcecode to Chrome manually.
 
 ## Installation
 
-1. Download this repository to your computer (Click 'Download Zip') and unzip the file
+1. Download this repository to your computer (click **'Download Zip'**) and unzip the file
 
 
 <img width="450" alt="readme .zip file" src="https://github.com/user-attachments/assets/c19f64a2-9264-4a74-a5f5-93dbefed179c" />
 
-2. Navigate to chrome://extensions/
-3. In the top right, activate 'Developer Mode'
+2. Navigate to **chrome://extensions/**
+3. In the top right, activate **'Developer mode'**
 
 
-<img width="203" alt="developer mode enable option" src="https://github.com/user-attachments/assets/0a771f7f-f4de-4986-91fd-d642db6617b6" />
+<img width="180" alt="developer mode enable option" src="https://github.com/user-attachments/assets/0a771f7f-f4de-4986-91fd-d642db6617b6" />
 
-4. In the top left, click 'Load unpacked extensions'
+4. In the top left, click **'Load unpacked'**
 
 <img width="250" alt="load unpacked extensions" src="https://github.com/user-attachments/assets/cc6d80cb-34ee-4563-9b13-4194ff202d37" />
 
-5. Select the 'src-chrome' folder in the unzipped folder that you downloaded from Step 1, and press submit.
+5. Select the **'src-chrome'** folder in the unzipped folder that you downloaded from Step 1, and press **'Submit'**.
 
 
 ## How it Works
 Open the video page or play a track on a supported web player and an <img width="24" alt="Ñ Dreaming Spanish add button" src="https://github.com/user-attachments/assets/4b63cd4f-3505-48f6-bae6-41062e0e77b0"/>
  button appears in the controls. When you click it, it captures the video/track info and the current timestamp and automatically submits it to your Dreaming Spanish "outside hours."
 
-### Currently supported
+See **[demos](https://github.com/TikeDev/dreaming-spanish-importer/tree/main/demos)** for more screenshots!
+
+<img width="420"  alt="Youtube Now Playing DS button" src="https://github.com/user-attachments/assets/67b49d5c-d1e4-4e18-84a2-addbac142e43" />
+
+
+### Currently Supported Platforms
 *"Now Playing" refers the controls of the page that shows the currently playing video or audio
 
 | Platform Web Player  | Where the Button(s) Appears |
@@ -45,7 +50,8 @@ Open the video page or play a track on a supported web player and an <img width=
 
 ## Known Bugs/Issues
 * Youtube - submitting from the Youtube watch history page doesn't capture the date it was watched. This is due to a limitation of the DS page not accepting automated user input on its date picker. At some point I'll switch the submit method with plain HTTP requests, which will fix this bug.
-* Spotify - submitting a "Marked as Finished" (with a checkmark) track from a podcast or audiobook page does not capture the duration as it's not displayed in this case. Buttons for such tracks will appear as dimmed orange with a tooltip and a warning will be added to the DS entry's description for easy updating later.
+* Spotify - submitting a "Marked as Finished" (with a checkmark) track from a podcast or audiobook page does not capture the duration as it's not displayed in this case. Buttons for such tracks will appear as dimmed orange <img width="24" alt="Ñ Dreaming Spanish add button with warning" src="https://github.com/TikeDev/dreaming-spanish-importer/blob/main/src-chrome/images/dreamingplus-warn.png?raw=true"/> with a tooltip and a warning will be added to the DS entry's description for easy updating later.
+
 
 ## FAQ
 
