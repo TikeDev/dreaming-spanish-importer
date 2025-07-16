@@ -1,6 +1,12 @@
-console.log("[Dreaming Languages Importer] Injecting button...");
 
 window.onload = function () {
+  // DON'T INJECT if toggle switch off
+  chrome.storage.sync.get('toggleInjectSpotify', (data) => {
+    if (data.toggleInjectSpotify === false) return;
+
+
+  console.log("[Dreaming Languages Importer] Injecting button...");
+
   let controlsSelector = "[data-testid*=control-button-npv]";  // element to inject button into
   let buttonID = "dreaming-spanish-np-button";                 // DS button ID
   let buttonSelector = `#${buttonID}`;                         // DS button selector
@@ -131,7 +137,7 @@ window.onload = function () {
 
       // insert button
       if (trackListElement) {
-      let playButton = trackListElement.querySelector('button[data-testid="play-button"]');
+      let playButton = trackListElement.querySelector('button[data-testid="play-button"][data-encore-id="buttonPrimary"]');
         playButton.after(button);  // add to right of play button
       } 
       else {
@@ -428,4 +434,5 @@ window.onload = function () {
       }
     }
   }, 1000); 
+})
 };
