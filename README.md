@@ -9,21 +9,43 @@ You can download this repository and add the sourcecode to Chrome manually.
 
 ## Installation
 
-1. Download this repository to your computer. (Click 'Download Zip'). Note that you will need to unzip this.
+1. Download this repository to your computer (Click 'Download Zip') and unzip the file
 
-<img width="771" alt="readme_zip-file" src="https://github.com/user-attachments/assets/c19f64a2-9264-4a74-a5f5-93dbefed179c" />
+
+<img width="450" alt="readme .zip file" src="https://github.com/user-attachments/assets/c19f64a2-9264-4a74-a5f5-93dbefed179c" />
 
 2. Navigate to chrome://extensions/
 3. In the top right, activate 'Developer Mode'
 
 
-<img width="203" alt="Screen Shot 2025-06-11 at 3 48 57 PM" src="https://github.com/user-attachments/assets/0a771f7f-f4de-4986-91fd-d642db6617b6" />
+<img width="203" alt="developer mode enable option" src="https://github.com/user-attachments/assets/0a771f7f-f4de-4986-91fd-d642db6617b6" />
 
 4. In the top left, click 'Load unpacked extensions'
 
-<img width="512" alt="Screen Shot 2025-06-11 at 3 53 51 PM" src="https://github.com/user-attachments/assets/cc6d80cb-34ee-4563-9b13-4194ff202d37" />
+<img width="250" alt="load unpacked extensions" src="https://github.com/user-attachments/assets/cc6d80cb-34ee-4563-9b13-4194ff202d37" />
 
-5. Select the 'src-chrome' directory in the unzipped directory that you downloaded from Step 1, and press submit.
+5. Select the 'src-chrome' folder in the unzipped folder that you downloaded from Step 1, and press submit.
+
+
+## How it Works
+Open the video page or play a track on a supported web player and an <img width="24" alt="Ñ Dreaming Spanish add button" src="https://github.com/user-attachments/assets/4b63cd4f-3505-48f6-bae6-41062e0e77b0"/>
+ button appears in the controls. When you click it, it captures the video/track info and the current timestamp and automatically submits it to your Dreaming Spanish "outside hours."
+
+### Currently supported
+*"Now Playing" refers the controls of the page that shows the currently playing video or audio
+
+| Platform Web Player  | Where the Button(s) Appears |
+| ------------- | ------------- |
+| Youtube  | "Now Playing", watch history page  |
+| Spotify  | "Now Playing", podcast and audiobook pages  |
+| Pocket Casts  | "Now Playing", listening history page  |
+| Disney Plus  | "Now Playing"  |
+| Netflix  | "Now Playing"  |
+
+
+## Known Bugs/Issues
+* Youtube - submitting from the Youtube watch history page doesn't capture the date it was watched. This is due to a limitation of the DS page not accepting automated user input on its date picker. At some point I'll switch the submit method with plain HTTP requests, which will fix this bug.
+* Spotify - submitting a "Marked as Finished" (with a checkmark) track from a podcast or audiobook page does not capture the duration as it's not displayed in this case. Buttons for such tracks will appear as dimmed orange with a tooltip and a warning will be added to the DS entry's description for easy updating later.
 
 ## FAQ
 
@@ -38,7 +60,7 @@ I would recommend asking a friend to look at the code, or copying the code into 
 
 > It didn't work and I'm angry!
 
-It happens. Page layout changes in YouTube or DreamingSpanish can cause this extension to no longer function properly. If this happens, please feel free
+It happens. Page layout changes in YouTube or Dreaming Spanish can cause this extension to no longer function properly. If this happens, please feel free
 to open an issue on this repository and I will get to it as soon as I can.
 
 > You should add X feature
