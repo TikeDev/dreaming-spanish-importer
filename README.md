@@ -51,8 +51,12 @@ See **[demos](https://github.com/TikeDev/dreaming-spanish-importer/tree/main/dem
 
 
 ## Known Bugs/Issues
-* Youtube - submitting from the Youtube watch history page doesn't capture the date it was watched. This is due to a limitation of the DS page not accepting automated user input on its date picker. At some point I'll switch the submit method with plain HTTP requests, which will fix this bug.
+* Overall - occasionally (usually right after loading the extension) clicking a button to submit to DS will open the DS page and stop at the open input dialog box without filling in or submiting any info. If this happens, try pressing the button again and it should go through.
+* Youtube - submitting from the watch history page doesn't capture the date it was watched. This is due to a limitation of the DS page not accepting automated user input on its date picker. At some point I'll switch the submit method with plain HTTP requests, which will fix this bug.
 * Spotify - submitting a "Marked as Finished" (with a checkmark) track from a podcast or audiobook page does not capture the duration as it's not displayed in this case. Buttons for such tracks will appear as dimmed orange <img width="24" alt="Ñ Dreaming Spanish add button with warning" src="https://github.com/TikeDev/dreaming-spanish-importer/blob/main/src-chrome/images/dreamingplus-warn.png?raw=true"/> with a tooltip and a warning will be added to the DS entry's description for easy updating later.
+* Pocket Casts - submitting from the listening history page may result in an incorrect time as the time that's displayed (the duration left to listen) does not include seconds. This means that the closer you are to the end of a track, the less accurate the calculation of the total duration, and in turn the listened time, could be. _To ensure accurate time submission, start playback of the track and use the "Now Playing" button._
+
+
 * Firefox - even though there's a Firefox folder, most of the above features only apply to the Chrome version. Once I get the Chrome version to a known stable state I'll be able to create a Firefox version in no time.
 
 
