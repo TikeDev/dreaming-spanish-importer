@@ -2,6 +2,9 @@
 
 This is the source code for a Chrome extension (*Firefox extension to be updated soon!*) that seamlessly adds specialized buttons to YouTube, Spotify, Pocket Casts, Disney Plus, and Netflix for adding the video or podcast time to your Dreaming Spanish tracker!
 
+
+It also adds a playback rate slider to videos on the Dreaming Spanish website for finer speed control!
+
 ## How do I use this?
 
 For now you can download this repository and install the extension to Chrome manually. 
@@ -33,9 +36,14 @@ In the future I hope to have this available on at least the Chrome webstore.
 Open the video page or play a track on a supported web player and an <img width="24" alt="Ñ Dreaming Spanish add button" src="https://github.com/user-attachments/assets/4b63cd4f-3505-48f6-bae6-41062e0e77b0"/>
  button appears in the controls. When you click it, it captures the video/track info and the current timestamp and quickly opens a tab to automatically submit the info to your Dreaming Spanish "outside hours."
 
+ To use the playback rate slider, simply start playing a Dreaming Spanish video and it'll automatically appear in the video's 'Playback speed' menu.
+
 See **[demos](https://github.com/TikeDev/dreaming-spanish-importer/tree/main/demos)** for more screenshots!
 
 <img width="420"  alt="Youtube Now Playing DS button" src="https://github.com/user-attachments/assets/67b49d5c-d1e4-4e18-84a2-addbac142e43" />
+<img width="500"  alt="Dreaming Spanish playback rate slider" src="https://github.com/user-attachments/assets/cd7a06f2-920f-4ec8-ad6b-4901479ba668" />
+
+
 
 
 ### Currently Supported Platforms
@@ -51,12 +59,8 @@ See **[demos](https://github.com/TikeDev/dreaming-spanish-importer/tree/main/dem
 
 
 ## Known Bugs/Issues
-* Overall - occasionally (usually right after loading the extension) clicking a button to submit to DS will open the DS page and stop at the open input dialog box without filling in or submiting any info. If this happens, try pressing the button again and it should go through.
-* Youtube - submitting from the watch history page doesn't capture the date it was watched. This is due to a limitation of the DS page not accepting automated user input on its date picker. At some point I'll switch the submit method with plain HTTP requests, which will fix this bug.
+* Youtube - submitting from the Youtube watch history page doesn't capture the date it was watched. This is due to a limitation of the DS page not accepting automated user input on its date picker. At some point I'll switch the submit method with plain HTTP requests, which will fix this bug.
 * Spotify - submitting a "Marked as Finished" (with a checkmark) track from a podcast or audiobook page does not capture the duration as it's not displayed in this case. Buttons for such tracks will appear as dimmed orange <img width="24" alt="Ñ Dreaming Spanish add button with warning" src="https://github.com/TikeDev/dreaming-spanish-importer/blob/main/src-chrome/images/dreamingplus-warn.png?raw=true"/> with a tooltip and a warning will be added to the DS entry's description for easy updating later.
-* Pocket Casts - submitting from the listening history page may result in an incorrect time as the time that's displayed (the duration left to listen) does not include seconds. This means that the closer you are to the end of a track, the less accurate the calculation of the total duration, and in turn the listened time, could be. _To ensure accurate time submission, start playback of the track and use the "Now Playing" button._
-
-
 * Firefox - even though there's a Firefox folder, most of the above features only apply to the Chrome version. Once I get the Chrome version to a known stable state I'll be able to create a Firefox version in no time.
 
 
