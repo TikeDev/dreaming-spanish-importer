@@ -1,6 +1,7 @@
-console.log("[Dreaming Languages Importer] Injecting button...");
 
 window.onload = function () {
+  console.log("[Dreaming Languages Importer] Injecting button...");
+
   let controlsSelector = ".ytp-right-controls"; // element to ultimately inject button into
   let buttonID = "dreaming-spanish-np-button";  // DS button ID
   let buttonSelector = `#${buttonID}`;          // DS button selector
@@ -366,7 +367,9 @@ window.onload = function () {
     if (!histElements || !histElements.length) return;
 
     histElements.forEach((histElement, i) => {
-      if (histElement.querySelector(`[id^='${histButtonID}']`)) // prevent duplicates
+      let closestAncestor = histElement.closest('#dismissible');
+      let isShort = closestAncestor.querySelector('[href^="/shorts/"]');
+      if (isShort || histElement.querySelector(`[id^='${histButtonID}']`)) // prevent duplicates and youtube shorts
         return;
 
       // Create the button element(s)
