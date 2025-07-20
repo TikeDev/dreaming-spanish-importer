@@ -131,7 +131,8 @@ let pendingTabInfo = null;
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "openDreamingSpanish") {
     const tabInfo = {
-      duration: request.videoDuration,
+      duration: request.duration,
+      activity: request.activity,  
       tabUrl: request.tabUrl,
       title: request.title,
       author: request.author,
@@ -152,7 +153,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (sender.tab.id === pendingTabInfo.tabId) {
       chrome.tabs.sendMessage(sender.tab.id, {
         action: "autofillForm",
-        videoDuration: pendingTabInfo.duration,
+        duration: pendingTabInfo.duration,
+        activity: pendingTabInfo.activity,  
         tabUrl: pendingTabInfo.tabUrl,
         title: pendingTabInfo.title,
         author: pendingTabInfo.author,

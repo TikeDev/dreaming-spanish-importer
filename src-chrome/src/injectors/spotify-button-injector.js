@@ -272,7 +272,8 @@ window.onload = function () {
       chrome.runtime.sendMessage(
       {
         action: "openDreamingSpanish",
-        videoDuration: (duration || 1),  // in minutes, default 1 min
+        duration: (duration || 1),  // in minutes, default 1 min
+        activity: "listening",  
         tabUrl: entryUrl,
         title: title,
         author: author,
@@ -321,7 +322,8 @@ window.onload = function () {
     chrome.runtime.sendMessage(
     {
       action: "openDreamingSpanish",
-      videoDuration: (duration || 1), // can't submit 0 min, default 1 min
+      duration: (duration || 1), // can't submit 0 min, default 1 min
+      activity: "listening",  
       tabUrl: tabUrl,
       title: title,
       author: author

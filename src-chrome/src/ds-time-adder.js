@@ -2,6 +2,12 @@
 chrome.runtime.sendMessage({ action: "dsScriptReady" });
 let modalHandled = false;
 
+const activityOpts = {
+  "watching" : 0,
+  "listening" : 1,
+  "talking" : 2
+}
+
 // Function to simulate user input more thoroughly
 function simulateUserInput(element, value) {
   element.focus();
@@ -25,10 +31,11 @@ function simulateUserInput(element, value) {
 // Listen for messages from the background or other parts of the extension
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "autofillForm") {
-    const duration = request.videoDuration;
+    const duration = request.duration;
+    const activity = (request.activity ?? "watching");
     const tabUrl = request.tabUrl;
     const title = request.title;
-    const author = request.author !== undefined ? request.author : "Unknown Author";
+    const author = (request.author ?? "Unknown Author");
     const extraData = (request.extraData || "");
 
     // Create a MutationObserver to watch for the "Add hours outside the platform" button
@@ -68,7 +75,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
               // Stop observing once the modal is found
               modalObserverInstance.disconnect();
 
-              // Input the video duration into the 'timeMinutes' field
+              // VIDEO DURATION - Input into the 'timeMinutes' field
               const timeMinutesInput = modal.querySelector('input[name="timeMinutes"]');
               
               if (timeMinutesInput) {
@@ -80,6 +87,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 return; // Exit if the input field isn't found
               }
 
+              // DESCRIPTION - Input into the 'description' field
               const descriptionInput = modal.querySelector('textarea[name="description"]');
               
               if (descriptionInput) {
@@ -94,14 +102,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 return; // Exit if the input field isn't found
               }
 
-              // Find and click the 'save' button
+              // ACTIVITY - Select the appropriate 'activity' field
+              let activityEls = modal.querySelectorAll('.ds-buttons-card__button'); // get buttons
+              if (activityEls){
+                let activitySel = activityEls[activityOpts[activity]];
+                activitySel.click();
+              }
+
+              // SAVE - Find and click the 'save' button
               const saveButton = [...modal.querySelectorAll("button")].find(
                 (btn) => btn.textContent.trim().toLowerCase() === "save"
               );
 
               if (saveButton) {
                 saveButton.click();
-              } else {
+              } 
+              else {
                 console.error("Dreaming Spanish Helper: 'save' button not found.");
               }
               window.close();

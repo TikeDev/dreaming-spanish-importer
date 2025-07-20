@@ -1,6 +1,7 @@
-console.log("[Dreaming Languages Importer] Injecting button...");
 
 window.onload = function () {
+  console.log("[Dreaming Languages Importer] Injecting button...");
+
   let controlsSelector = 'button[aria-label="Full screen"], button[aria-label="Pantalla completa"], button[aria-label="Tela inteira"], button[aria-label="Plein écran"]' ;  // element to ultimately inject button into
   let buttonID = "dreaming-spanish-button"; // DS button ID
   //let buttonSelector = `#${buttonID}`;      // DS button selector
@@ -65,7 +66,8 @@ window.onload = function () {
       chrome.runtime.sendMessage(
       {
         action: "openDreamingSpanish",
-        videoDuration: (duration || 1), // can't submit 0 min, default 1 min
+        duration: (duration || 1), // can't submit 0 min, default 1 min
+        activity: "watching",  
         tabUrl: tabUrl,
         title: title,
         author: author,

@@ -1,6 +1,6 @@
-console.log("[Dreaming Languages Importer] Injecting button...");
 
 window.onload = function () {
+  console.log("[Dreaming Languages Importer] Injecting button...");
   // now playing button
   let controlsSelector = ".controls-left";  // element to ultimately inject button into
   let buttonID = "dreaming-spanish-button"; // DS button ID
@@ -90,7 +90,8 @@ window.onload = function () {
       chrome.runtime.sendMessage(
       {
         action: "openDreamingSpanish",
-        videoDuration: (duration || 1), // can't submit 0 min, default 1 min
+        duration: (duration || 1), // can't submit 0 min, default 1 min
+        activity: "listening",  
         tabUrl: tabUrl,
         title: title,
         author: author,
@@ -359,7 +360,8 @@ window.onload = function () {
       chrome.runtime.sendMessage(
       {
         action: "openDreamingSpanish",
-        videoDuration: (duration || 1), // can't submit 0 min, default 1 min
+        duration: (duration || 1), // can't submit 0 min, default 1 min
+        activity: "listening",  
         tabUrl: entryUrl,
         title: title,
         author: author
