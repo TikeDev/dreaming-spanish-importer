@@ -1,2 +1,2 @@
 {"typeAcquisition": {"include": ["chrome"]},
-"include":["**/datatables"]}
+"include":["src/datatables"]}
