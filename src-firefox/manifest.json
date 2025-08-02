@@ -1,42 +1,90 @@
 {
   "manifest_version": 3,
-  "name": "Dreaming Plus",
-  "version": "1.0.1",
-  "description": "Automatically add video hours to Dreaming Spanish from YouTube and Spotify.",
-  "permissions": ["storage"],
+  "name": "Dreaming Spanish Importer",
+  "version": "1.0.0",
+  "description": "Automatically add watch/listening history to Dreaming Spanish from a file, Youtube, Spotify, Pocket Casts, Disney Plus, or Netflix.",
+  "action": {
+    "default_icon": "images/dreamingplus-black-bgwhite.png",
+    "default_title": "Dreaming Spanish Importer"
+  },
+  "permissions": [
+    "storage"
+  ],  
+"background": {
+  "scripts": ["src/background.js"]
+  },
   "content_scripts": [
     {
       "matches": [
-        "https://open.spotify.com/*",
-        "https://www.open.spotify.com/*",
-        "https://spotify.com/*",
-        "https://www.spotify.com/*",
-        "https://www.youtube.com/*", 
-        "https://youtube.com/*"],
-      "js": ["yt-button-injector.js"]
+        "https://www.youtube.com/*" 
+        ],        
+      "js": ["src/injectors/yt-button-injector.js"],
+      "run_at": "document_start"
     },
+    {
+      "matches": [
+        "https://www.open.spotify.com/*",
+        "https://www.spotify.com/*",
+        "https://open.spotify.com/*",
+        "https://spotify.com/*"
+      ],
+      "js": ["src/injectors/spotify-button-injector.js"],
+      "css": [ "src/styles/spotify.css" ]
+    },
+    {
+      "matches": [
+        "https://www.play.pocketcasts.com/*",
+        "https://www.pocketcasts.com/*",
+        "https://play.pocketcasts.com/*",
+        "https://pocketcasts.com/*"
+      ],
+      "js": ["src/injectors/pocketcasts-button-injector.js"]
+    },    
+    {
+      "matches": [
+        "https://www.disneyplus.com/*",
+        "https://disneyplus.com/*"
+      ],
+      "js": ["src/injectors/disneyplus-button-injector.js"]
+    },    
+    {
+      "matches": [
+        "https://www.netflix.com/*",
+        "https://netflix.com/*"
+      ],
+      "js": ["src/injectors/netflix-button-injector.js"]
+    },    
     {
       "matches": [
         "https://www.dreamingspanish.com/*",
         "https://dreamingspanish.com/*"
       ],
-      "js": ["ds-time-adder.js"]
-    }
+      "js": ["src/ds-time-adder.js"]
+    }  
   ],
-  "background": {
-    "scripts": ["background.js"]
-  },
   "web_accessible_resources": [
     {
-      "resources": ["dreamingplus.png","dreamingplus-clicked.png"],
-      "matches": ["https://www.youtube.com/*","https://open.spotify.com/*","https://spotify.com/*"]
+      "resources": ["images/dreamingplus*.png"],
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://www.open.spotify.com/*",
+        "https://www.spotify.com/*",
+        "https://open.spotify.com/*",
+        "https://spotify.com/*",
+        "https://www.play.pocketcasts.com/*",
+        "https://play.pocketcasts.com/*",
+        "https://www.pocketcasts.com/*",
+        "https://pocketcasts.com/*",
+        "https://www.disneyplus.com/*",
+        "https://disneyplus.com/*",
+        "https://www.netflix.com/*",
+        "https://netflix.com/*"
+      ]
     }
   ],
-  "action": {},
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "dreamingplus@maciejw.dev",
-      "strict_min_version": "58.0"
-    }
+"browser_specific_settings": {
+  "gecko": {
+    "id": "dreaminglanguagesimporter@tike.dev"
   }
+}  
 }
