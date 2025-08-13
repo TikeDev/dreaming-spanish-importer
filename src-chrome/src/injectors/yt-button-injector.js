@@ -217,7 +217,7 @@ window.onload = function () {
 
       // AUTHOR - Get the channel name
     let author = "Unknown Author";
-    const authorElement = document.querySelector("a[class*='yt-simple-endpoint style-scope yt-formatted-string']");
+    const authorElement = document.querySelector("yt-formatted-string.ytd-channel-name");
     if (authorElement) {
       author = authorElement.innerText;
     }
